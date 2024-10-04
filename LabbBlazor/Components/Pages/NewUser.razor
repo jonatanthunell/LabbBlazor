@@ -3,55 +3,77 @@
 @rendermode InteractiveServer
 <h3>New User</h3>
 
-<EditForm Model="@_user" OnValidSubmit="HandleValidSubmit">
-    <DataAnnotationsValidator />
-    <div>
-        <label>
-            Full Name:<br />
-            <InputText id="name" @bind-Value="_user.Name" />
-            <ValidationMessage For="@(() => _user.Name)" />
-        </label><br />
-        <label>
-            Email:<br />
-            <InputText id="email" @bind-Value="_user.Email" />
-            <ValidationMessage For="@(() => _user.Email)" />
-        </label><br />
-        <label>
-            Street:<br />
-            <InputText id="street" @bind-Value="_user.Address.Street" />
-            <ValidationMessage For="@(() => _user.Address.Street)" />
-        </label>:<br />
-        <label>
-            City:<br />
-            <InputText id="city" @bind-Value="_user.Address.City" />
-            <ValidationMessage For="@(() => _user.Address.City)" />
-        </label><br />
-        <label>
-            Zip Code:<br />
-            <InputText id="zipcode" @bind-Value="_user.Address.ZipCode" />
-            <ValidationMessage For="@(() => _user.Address.ZipCode)" />
-        </label><br />
-        <label>
-            Company Name:<br />
-            <InputText id="companyname" @bind-Value="_user.Company.Name" />
-            <ValidationMessage For="@(() => _user.Company.Name)" />
-        </label><br />
-        <label>
-            Company Catchphrase:<br />
-            <InputText id="companycatchphrase" @bind-Value="_user.Company.CatchPhrase" />
-            <ValidationMessage For="@(() => _user.Company.CatchPhrase)" />
-        </label><br />
-    </div>
-    <button type="submit">Submit</button>
-</EditForm>
-
+@if (!_validFormSubmited)
+{
+    <EditForm Model="@_user" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <div>
+            <label>
+                Full Name:<br />
+                <InputText id="name" @bind-Value="_user.Name" />
+                <ValidationMessage For="@(() => _user.Name)" />
+            </label><br />
+            <label>
+                Email:<br />
+                <InputText id="email" @bind-Value="_user.Email" />
+                <ValidationMessage For="@(() => _user.Email)" />
+            </label><br />
+            <label>
+                Street:<br />
+                <InputText id="street" @bind-Value="_user.Address.Street" />
+                <ValidationMessage For="@(() => _user.Address.Street)" />
+            </label>:<br />
+            <label>
+                City:<br />
+                <InputText id="city" @bind-Value="_user.Address.City" />
+                <ValidationMessage For="@(() => _user.Address.City)" />
+            </label><br />
+            <label>
+                Zip Code:<br />
+                <InputText id="zipcode" @bind-Value="_user.Address.ZipCode" />
+                <ValidationMessage For="@(() => _user.Address.ZipCode)" />
+            </label><br />
+            <label>
+                Company Name:<br />
+                <InputText id="companyname" @bind-Value="_user.Company.Name" />
+                <ValidationMessage For="@(() => _user.Company.Name)" />
+            </label><br />
+            <label>
+                Company Catchphrase:<br />
+                <InputText id="companycatchphrase" @bind-Value="_user.Company.CatchPhrase" />
+                <ValidationMessage For="@(() => _user.Company.CatchPhrase)" />
+            </label><br />
+        </div>
+        <button type="submit">Submit</button>
+    </EditForm>
+}
+else
+{
+    <p>You submited the following information:</p>
+    <ul style="list-style-type:none">
+        <li><b>Full Name:</b></li>
+        <li>@_user.Name</li>
+        <li><b>Email:</b></li>
+        <li>@_user.Email</li>
+        <li><b>Street:</b></li>
+        <li>@_user.Address.Street</li>
+        <li><b>City:</b></li>
+        <li>@_user.Address.City</li>
+        <li><b>Zip Code:</b></li>
+        <li>@_user.Address.ZipCode</li>
+        <li><b>Company Name:</b></li>
+        <li>@_user.Company.Name</li>
+        <li><b>Company Catchphrase:</b></li>
+        <li>@_user.Company.CatchPhrase</li>
+    </ul>
+}
 
 @code {
     private User _user = new User();
-
+    private bool _validFormSubmited = false;
     private void HandleValidSubmit()
     {
-        Console.WriteLine("Form submitted successfully!");
+        _validFormSubmited = true;
     }
     public class User
     {
