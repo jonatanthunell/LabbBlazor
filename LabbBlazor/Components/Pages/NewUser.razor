@@ -1,25 +1,71 @@
 ﻿@page "/newuser"
+@using System.ComponentModel.DataAnnotations
 @rendermode InteractiveServer
-<h3>NewUser</h3>
+<h3>New User</h3>
+
+    <EditForm Model="@_user" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />        
+        <InputText id="name" @bind-Value="_user.Name" />        
+        <ValidationMessage For="@(() => _user.Name)" />
+        <InputText id="email" @bind-Value="_user.Email" />
+        <ValidationMessage For="@(() => _user.Email)" />
+        <InputText id="street" @bind-Value="_user.Address.Street" />
+        <ValidationMessage For="@(() => _user.Address.Street)" />
+        <InputText id="city" @bind-Value="_user.Address.City" />
+        <ValidationMessage For="@(() => _user.Address.City)" />
+        <InputText id="zipcode" @bind-Value="_user.Address.ZipCode" />
+        <ValidationMessage For="@(() => _user.Address.ZipCode)" />
+        <InputText id="companyname" @bind-Value="_user.Company.Name" />
+        <ValidationMessage For="@(() => _user.Company.Name)" />
+        <InputText id="companycatchphrase" @bind-Value="_user.Company.CatchPhrase" />
+        <ValidationMessage For="@(() => _user.Company.CatchPhrase)" />
+        <button type="submit">Submit</button>
+    </EditForm>
+
 
 @code {
+    private User _user = new User();
+
+    private void HandleValidSubmit()
+    {
+        Console.WriteLine("Form submitted successfully!");
+    }
     public class User
     {
         public int ID { get; set; }
+        [Required]
+        [StringLength(50, MinimumLength = 2)]
         public string? Name { get; set; }
+        [Required]
+        [EmailAddress]
         public string? Email { get; set; }
-        public Address? Address { get; set; }
-        public Company? Company { get; set; }
+        public Address Address { get; set; }
+        public Company Company { get; set; }
+        public User()
+        {
+            Address = new Address();
+            Company = new Company();
+        }
     }
     public class Address
     {
+        [Required]
+        [StringLength(50, MinimumLength = 2)]
         public string? Street { get; set; }
+        [Required]
+        [StringLength(50, MinimumLength = 2)]
         public string? City { get; set; }
+        [Required]
+        [StringLength(50, MinimumLength = 2)]
         public string? ZipCode { get; set; }
     }
     public class Company
     {
+        [Required]
+        [StringLength(50, MinimumLength = 2)]
         public string? Name { get; set; }
+        [Required]
+        [StringLength(100, MinimumLength = 2)]
         public string? CatchPhrase { get; set; }
     }
 
