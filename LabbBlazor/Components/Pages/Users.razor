@@ -2,6 +2,52 @@
 @rendermode InteractiveServer
 <h3>Users</h3>
 
+@if (_users == null)
+{
+    <p><em>Fetching User Information...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>City</th>
+                <th>Street</th>                
+                <th>Zip Code</th>
+                <th>Company</th>
+                <th>Company Catchphrase</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in _users)
+            {
+                <tr>
+                    <td>@user.ID</td>
+                    <td>@user.Name</td>
+                    <td>@user.Email</td>
+                    <td>@user.Address.City</td>
+                    <td>@user.Address.Street</td>
+                    <td>@user.Address.ZipCode</td>
+                    <td>@user.Company.Name</td>
+                    <td>@user.Company.CatchPhrase</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
 @code {
+    private List<User>? _users;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(1000);
+
+        SampleDataAccess dataAccess = new SampleDataAccess();
+        _users = dataAccess.GetUsers();
+    }
 
 }
