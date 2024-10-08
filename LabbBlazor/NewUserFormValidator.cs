@@ -23,8 +23,8 @@ namespace LabbBlazor
         public string? AddressCity { get; set; }
 
         [Required]
-        [Range(1, int.MaxValue)]
-        public int? AddressZipCode { get; set; }
+        [StringLength(50, MinimumLength = 2)]
+        public string? AddressZipCode { get; set; }
 
         [Required]
         [StringLength(50, MinimumLength = 2)]

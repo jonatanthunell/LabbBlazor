@@ -14,7 +14,7 @@ namespace LabbBlazor
             Address = new Address();
             Company = new Company();
         }
-        public User(int id, string name, string email, string streetAddress, string cityAddress, int zipcodeAddress, string nameCompany, string catchphraseCompany)
+        public User(int id, string name, string email, string streetAddress, string cityAddress, string zipcodeAddress, string nameCompany, string catchphraseCompany)
         {
             ID = id;
             Name = name;
@@ -28,12 +28,12 @@ namespace LabbBlazor
     {
         public string? Street { get; set; }
         public string? City { get; set; }
-        public int ZipCode { get; set; }
+        public string ZipCode { get; set; }
         public Address()
         {
             
         }
-        public Address(string street, string city, int zipcode)
+        public Address(string street, string city, string zipcode)
         {
             Street = street;
             City = city;

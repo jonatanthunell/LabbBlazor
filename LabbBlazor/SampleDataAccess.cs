@@ -1,8 +1,8 @@
 ﻿namespace LabbBlazor
 {
-    public class SampleDataAccess
+    public class SampleDataAccess : IDataAccess
     {
-        public List<User> GetUsers()
+        public List<User>? GetUsers()
         {
             SampleUserData userData = new SampleUserData();
             return userData.Users;
