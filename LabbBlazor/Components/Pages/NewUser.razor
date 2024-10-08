@@ -6,79 +6,96 @@
 
 @if (!_validFormSubmited)
 {
-    <EditForm Model="@_user" OnValidSubmit="HandleValidSubmit">
-        <DataAnnotationsValidator />
-        <div>
-            <label>
-                Full Name:<br />
-                <InputText id="name" @bind-Value="_user.Name" />
-                <ValidationMessage For="@(() => _user.Name)" />
-            </label><br />
-            <label>
-                Email:<br />
-                <InputText id="email" @bind-Value="_user.Email" />
-                <ValidationMessage For="@(() => _user.Email)" />
-            </label><br />
-            <label>
-                Street:<br />
-                <InputText id="street" @bind-Value="_user.Address.Street" />
-                <ValidationMessage For="@(() => _user.Address.Street)" />
-            </label>:<br />
-            <label>
-                City:<br />
-                <InputText id="city" @bind-Value="_user.Address.City" />
-                <ValidationMessage For="@(() => _user.Address.City)" />
-            </label><br />
-            <label>
-                Zip Code:<br />
-                <InputNumber id="zipcode" @bind-Value="_user.Address.ZipCode" />
-                <ValidationMessage For="@(() => _user.Address.ZipCode)" />
-            </label><br />
-            <label>
-                Company Name:<br />
-                <InputText id="companyname" @bind-Value="_user.Company.Name" />
-                <ValidationMessage For="@(() => _user.Company.Name)" />
-            </label><br />
-            <label>
-                Company Catchphrase:<br />
-                <InputText id="companycatchphrase" @bind-Value="_user.Company.CatchPhrase" />
-                <ValidationMessage For="@(() => _user.Company.CatchPhrase)" />
-            </label><br />
-        </div>
-        <button type="submit">Submit</button>
-    </EditForm>
+    try
+    {
+        <EditForm Model="@_newUser" OnValidSubmit="HandleValidSubmit">
+            <DataAnnotationsValidator />
+            <div>
+                <label>
+                    Full Name:<br />
+                    <InputText id="name" @bind-Value="_newUser.Name" />
+                    <ValidationMessage For="@(() => _newUser.Name)" />
+                </label><br />
+                <label>
+                    Email:<br />
+                    <InputText id="email" @bind-Value="_newUser.Email" />
+                    <ValidationMessage For="@(() => _newUser.Email)" />
+                </label><br />
+                <label>
+                    Street:<br />
+                    <InputText id="street" @bind-Value="_newUser.AddressStreet" />
+                    <ValidationMessage For="@(() => _newUser.AddressStreet)" />
+                </label>:<br />
+                <label>
+                    City:<br />
+                    <InputText id="city" @bind-Value="_newUser.AddressCity" />
+                    <ValidationMessage For="@(() => _newUser.AddressCity)" />
+                </label><br />
+                <label>
+                    Zip Code:<br />
+                    <InputNumber id="zipcode" @bind-Value="_newUser.AddressZipCode" />
+                    <ValidationMessage For="@(() => _newUser.AddressZipCode)" />
+                </label><br />
+                <label>
+                    Company Name:<br />
+                    <InputText id="companyname" @bind-Value="_newUser.CompanyName" />
+                    <ValidationMessage For="@(() => _newUser.CompanyName)" />
+                </label><br />
+                <label>
+                    Company Catchphrase:<br />
+                    <InputText id="companycatchphrase" @bind-Value="_newUser.CompanyCatchPhrase" />
+                    <ValidationMessage For="@(() => _newUser.CompanyCatchPhrase)" />
+                </label><br />
+            </div>
+            <button type="submit">Submit</button>
+        </EditForm>
+    }
+    catch (NullReferenceException e)
+    {
+        <p>Error, @e.Message, please fill out form again </p>
+    }
+
 }
 else
 {
     <p>You submited the following information:</p>
     <ul style="list-style-type:none">
         <li><b>Full Name:</b></li>
-        <li>@_user.Name</li>
+        <li>@_newUser.Name</li>
         <li><b>Email:</b></li>
-        <li>@_user.Email</li>
+        <li>@_newUser.Email</li>
         <li><b>Street:</b></li>
-        <li>@_user.Address.Street</li>
+        <li>@_newUser.AddressStreet</li>
         <li><b>City:</b></li>
-        <li>@_user.Address.City</li>
+        <li>@_newUser.AddressCity</li>
         <li><b>Zip Code:</b></li>
-        <li>@_user.Address.ZipCode</li>
+        <li>@_newUser.AddressZipCode</li>
         <li><b>Company Name:</b></li>
-        <li>@_user.Company.Name</li>
+        <li>@_newUser.CompanyName</li>
         <li><b>Company Catchphrase:</b></li>
-        <li>@_user.Company.CatchPhrase</li>
+        <li>@_newUser.CompanyCatchPhrase</li>
     </ul>
     <p>Your user ID is: @_userID</p>
 }
 
 @code {
-    private User _user = new User();
+    private NewUserFormValidator _newUser = new NewUserFormValidator();
+    private User _validatedUser = new User();
     private bool _validFormSubmited = false;
     private int _userID;
 
     private void HandleValidSubmit()
     {
+        try
+        {
+            _validatedUser = _newUser.GetValidatedUser();
+        }
+        catch
+        {
+            throw;
+        }
         _validFormSubmited = true;
-        
-        _userID = new SampleDataAccess().GetUsers().Count + 1;
+        _userID = _validatedUser.ID;
     }
 }
+h

@@ -5,15 +5,9 @@ namespace LabbBlazor
     public class User
     {
         public int ID { get; set; }
-        [Required]
-        [StringLength(50, MinimumLength = 2)]
         public string? Name { get; set; }
-        [Required]
-        [EmailAddress]
         public string? Email { get; set; }
-        [Required]
         public Address Address { get; set; }
-        [Required]
         public Company Company { get; set; }
         public User()
         {
@@ -32,14 +26,8 @@ namespace LabbBlazor
     }
     public class Address
     {
-        [Required]
-        [StringLength(50, MinimumLength = 2)]
         public string? Street { get; set; }
-        [Required]
-        [StringLength(50, MinimumLength = 2)]
         public string? City { get; set; }
-        [Required]
-        [Range(1, int.MaxValue)]
         public int ZipCode { get; set; }
         public Address()
         {
@@ -54,11 +42,7 @@ namespace LabbBlazor
     }
     public class Company
     {
-        [Required]
-        [StringLength(50, MinimumLength = 2)]
         public string? Name { get; set; }
-        [Required]
-        [StringLength(100, MinimumLength = 2)]
         public string? CatchPhrase { get; set; }
         public Company()
         {
