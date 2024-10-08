@@ -2,6 +2,6 @@
 {
     public interface IDataAccess
     {
-        public List<User>? GetUsers();
+        public List<User> GetUsers();
     }
 }

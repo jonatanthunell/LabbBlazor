@@ -8,7 +8,20 @@
 }
 else
 {
-    <p></p>
+    @if (_userDataErrorMessage == null)
+    {
+
+    }
+    else
+    {
+        <p>Could not load user data (@_userDataErrorMessage), displaying sample data</p>
+    }
+    <select @onchange="OnSortChanged">
+        <option value="name">Sort by Name</option>
+        <option value="id">Sort by ID</option>
+            
+    </select>
+
     <table class="table">
         <thead>
             <tr>
@@ -43,19 +56,61 @@ else
 
 @code {
     private List<User>? _users;
+    private IDataAccess? _dataAccess;
     private int _shownUsers = 0;
+    private string? _sortOption = "name";
+    private string? _userDataErrorMessage;
 
     protected override async Task OnInitializedAsync()
     {
         await Task.Delay(1000);
-
-        IDataAccess dataAccess = new JSONDataAccess();
-        _users = dataAccess.GetUsers().OrderBy(x => x.Name).ToList();
+        SetUserData();
+        SortUsers();
         _shownUsers = 5;
     }
+
+    private void SetUserData()
+    {
+        try
+        {
+            _userDataErrorMessage = null;
+            _dataAccess = new JSONDataAccess();
+            _users = _dataAccess.GetUsers();
+        }
+        catch (AggregateException e)
+        {
+            _userDataErrorMessage = e.Message;
+            _dataAccess = new SampleDataAccess();
+            _users = _dataAccess.GetUsers();
+        }
+        catch (HttpRequestException e)
+        {
+            _userDataErrorMessage = e.Message;
+            _dataAccess = new SampleDataAccess();
+            _users = _dataAccess.GetUsers();
+        }
+    }
+
     private void ShowAllEventHandler()
     {
         _shownUsers = (_users != null) ? _users.Count : 0;
     }
-    
+
+    private void OnSortChanged(ChangeEventArgs e)
+    {
+        _sortOption = e.Value?.ToString() ?? _sortOption;
+        SortUsers();
+    }
+
+    private void SortUsers()
+    {
+        if (_sortOption == "id")
+        {
+            _users = _users?.OrderBy(p => p.ID).ToList();
+        }
+        else if (_sortOption == "name")
+        {
+            _users = _users?.OrderBy(p => p.Name).ToList();
+        }
+    }
 }

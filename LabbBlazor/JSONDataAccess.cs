@@ -5,8 +5,10 @@ namespace LabbBlazor
 {
     public class JSONDataAccess : IDataAccess
     {
-        public List<User>? GetUsers()
+        public List<User> GetUsers()
         {
+            List<User> users = new List<User>();
+
             using (HttpClient client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -18,7 +20,7 @@ namespace LabbBlazor
 
                 var usersAsJson = response.Content.ReadAsStringAsync();
 
-                var users = JsonConvert.DeserializeObject<List<User>>(usersAsJson.Result);
+                users = JsonConvert.DeserializeObject<List<User>>(usersAsJson.Result) ?? users;
 
                 return users;
             }
