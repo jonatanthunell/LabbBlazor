@@ -2,7 +2,7 @@
 @rendermode InteractiveServer
 <h3>Users</h3>
 
-@if (_users == null)
+@if (_users.Count < 1)
 {
     <p><em>Fetching User Information...</em></p>
 }
