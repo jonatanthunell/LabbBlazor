@@ -8,11 +8,7 @@
 }
 else
 {
-    @if (_userDataErrorMessage == null)
-    {
-
-    }
-    else
+    @if (_userDataErrorMessage != null)
     {
         <p>Could not load user data (@_userDataErrorMessage)</p>
         <p>Please contact admin, displaying sample data</p>
@@ -46,7 +42,7 @@ else
         <tbody>
             @for (int i = 0; i < _shownUsers; i++)
             {
-                if (SearchUsers(i))
+                if (SearchUser(_users[i]))
                 {
                     <tr>
                         <td>@_users[i].ID</td>
@@ -133,15 +129,15 @@ else
             _users = _users.OrderBy(p => p.Name).ToList();
         }
     }
-    private bool SearchUsers(int currentUser)
+    private bool SearchUser(User currentUser)
     {
         if (_searchOption == "name")
         {
-            return _users[currentUser].Name!.ToLower().Contains(_searchString.ToLower());
+            return currentUser.Name!.ToLower().Contains(_searchString.ToLower());
         }
         else if (_searchOption == "city")
         {
-            return _users[currentUser].Address.City!.ToLower().Contains(_searchString.ToLower());
+            return currentUser.Address.City!.ToLower().Contains(_searchString.ToLower());
         }
         return false;
     }
