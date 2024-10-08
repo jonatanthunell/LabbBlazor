@@ -15,39 +15,45 @@ else
                 <th>Name</th>
                 <th>Email</th>
                 <th>City</th>
-                <th>Street</th>                
+                <th>Street</th>
                 <th>Zip Code</th>
                 <th>Company</th>
                 <th>Company Catchphrase</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var user in _users)
+            @for (int i = 0; i < _shownUsers; i++)
             {
                 <tr>
-                    <td>@user.ID</td>
-                    <td>@user.Name</td>
-                    <td>@user.Email</td>
-                    <td>@user.Address.City</td>
-                    <td>@user.Address.Street</td>
-                    <td>@user.Address.ZipCode</td>
-                    <td>@user.Company.Name</td>
-                    <td>@user.Company.CatchPhrase</td>
+                    <td>@_users[i].ID</td>
+                    <td>@_users[i].Name</td>
+                    <td>@_users[i].Email</td>
+                    <td>@_users[i].Address.City</td>
+                    <td>@_users[i].Address.Street</td>
+                    <td>@_users[i].Address.ZipCode</td>
+                    <td>@_users[i].Company.Name</td>
+                    <td>@_users[i].Company.CatchPhrase</td>
                 </tr>
             }
         </tbody>
     </table>
+    <button type="button" @onclick=ShowAllEventHandler>Show All</button>
 }
 
 @code {
     private List<User>? _users;
+    private int _shownUsers = 0;
 
     protected override async Task OnInitializedAsync()
     {
         await Task.Delay(1000);
 
         SampleDataAccess dataAccess = new SampleDataAccess();
-        _users = dataAccess.GetUsers();
+        _users = dataAccess.GetUsers().OrderBy(x => x.Name).ToList();
+        _shownUsers = 5;
     }
-
+    private void ShowAllEventHandler()
+    {
+        _shownUsers = (_users != null) ? _users.Count : 0;
+    }
 }

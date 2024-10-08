@@ -1,5 +1,6 @@
 ﻿@page "/newuser"
 @using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Components.Forms
 @rendermode InteractiveServer
 <h3>New User</h3>
 
@@ -30,7 +31,7 @@
             </label><br />
             <label>
                 Zip Code:<br />
-                <InputText id="zipcode" @bind-Value="_user.Address.ZipCode" />
+                <InputNumber id="zipcode" @bind-Value="_user.Address.ZipCode" />
                 <ValidationMessage For="@(() => _user.Address.ZipCode)" />
             </label><br />
             <label>
@@ -66,13 +67,18 @@ else
         <li><b>Company Catchphrase:</b></li>
         <li>@_user.Company.CatchPhrase</li>
     </ul>
+    <p>Your user ID is: @_userID</p>
 }
 
 @code {
     private User _user = new User();
     private bool _validFormSubmited = false;
+    private int _userID;
+
     private void HandleValidSubmit()
     {
         _validFormSubmited = true;
+        
+        _userID = new SampleDataAccess().GetUsers().Count + 1;
     }
 }
