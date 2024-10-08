@@ -14,13 +14,21 @@ else
     }
     else
     {
-        <p>Could not load user data (@_userDataErrorMessage), displaying sample data</p>
+        <p>Could not load user data (@_userDataErrorMessage)</p>
+        <p>Please contact admin, displaying sample data</p>
     }
+
     <select @onchange="OnSortChanged">
         <option value="name">Sort by Name</option>
         <option value="id">Sort by ID</option>
-            
     </select>
+
+    <select @bind="_searchOption">
+        <option value="name">Search by Name</option>
+        <option value="city">Search by City</option>
+    </select>
+
+    <input id="search" @bind-value="_searchString" @oninput=OnSearchInput />
 
     <table class="table">
         <thead>
@@ -38,28 +46,34 @@ else
         <tbody>
             @for (int i = 0; i < _shownUsers; i++)
             {
-                <tr>
-                    <td>@_users[i].ID</td>
-                    <td>@_users[i].Name</td>
-                    <td>@_users[i].Email</td>
-                    <td>@_users[i].Address.City</td>
-                    <td>@_users[i].Address.Street</td>
-                    <td>@_users[i].Address.ZipCode</td>
-                    <td>@_users[i].Company.Name</td>
-                    <td>@_users[i].Company.CatchPhrase</td>
-                </tr>
+                if (SearchUsers(i))
+                {
+                    <tr>
+                        <td>@_users[i].ID</td>
+                        <td>@_users[i].Name</td>
+                        <td>@_users[i].Email</td>
+                        <td>@_users[i].Address.City</td>
+                        <td>@_users[i].Address.Street</td>
+                        <td>@_users[i].Address.ZipCode</td>
+                        <td>@_users[i].Company.Name</td>
+                        <td>@_users[i].Company.CatchPhrase</td>
+                    </tr>
+                }
             }
         </tbody>
     </table>
+
     <button type="button" @onclick=ShowAllEventHandler>Show All</button>
 }
 
 @code {
-    private List<User>? _users;
+    private List<User> _users = new List<User>();
     private IDataAccess? _dataAccess;
     private int _shownUsers = 0;
-    private string? _sortOption = "name";
+    private string _sortOption = "name";
     private string? _userDataErrorMessage;
+    private string _searchString = string.Empty;
+    private string _searchOption = "name";
 
     protected override async Task OnInitializedAsync()
     {
@@ -102,15 +116,33 @@ else
         SortUsers();
     }
 
+    private void OnSearchInput(ChangeEventArgs e)
+    {
+        _searchString = e.Value?.ToString() ?? _searchString;
+    }
+
+
     private void SortUsers()
     {
         if (_sortOption == "id")
         {
-            _users = _users?.OrderBy(p => p.ID).ToList();
+            _users = _users.OrderBy(p => p.ID).ToList();
         }
         else if (_sortOption == "name")
         {
-            _users = _users?.OrderBy(p => p.Name).ToList();
+            _users = _users.OrderBy(p => p.Name).ToList();
         }
+    }
+    private bool SearchUsers(int currentUser)
+    {
+        if (_searchOption == "name")
+        {
+            return _users[currentUser].Name!.ToLower().Contains(_searchString.ToLower());
+        }
+        else if (_searchOption == "city")
+        {
+            return _users[currentUser].Address.City!.ToLower().Contains(_searchString.ToLower());
+        }
+        return false;
     }
 }
