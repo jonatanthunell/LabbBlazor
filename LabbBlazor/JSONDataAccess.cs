@@ -25,5 +25,25 @@ namespace LabbBlazor
                 return users;
             }
         }
+        public List<ToDo> GetToDos()
+        {
+            List<ToDo> todos = new List<ToDo>();
+
+            using (HttpClient client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                client.DefaultRequestHeaders.UserAgent.ParseAdd("Nothing");
+
+                var response = client.GetAsync("https://jsonplaceholder.typicode.com/todos").Result;
+
+                response.EnsureSuccessStatusCode();
+
+                var todosAsJson = response.Content.ReadAsStringAsync();
+
+                todos = JsonConvert.DeserializeObject<List<ToDo>>(todosAsJson.Result) ?? todos;
+
+                return todos;
+            }
+        }
     }
 }
