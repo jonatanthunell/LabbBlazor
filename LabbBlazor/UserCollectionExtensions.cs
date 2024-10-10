@@ -20,7 +20,14 @@
         }
         public static List<User> FilterUsersByAmount(this List<User> users, int amount)
         {
-            return users.Take(amount).ToList();
+            if (amount >= 0 && amount <= users.Count) 
+            {
+                return users.Take(amount).ToList();
+            }
+            else
+            {
+                throw new ArgumentOutOfRangeException();
+            }
         }
         
     }

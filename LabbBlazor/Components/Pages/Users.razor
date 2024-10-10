@@ -13,22 +13,26 @@ else
         <p>Could not load user data (@_userDataErrorMessage)</p>
         <p>Please contact admin, displaying sample data</p>
     }
+    @if (_userIndexOftOfRangeMessage != null)
+    {
+        <p>_userIndexOftOfRangeMessage</p>
+    }
 
-    <InputSelect @bind-Value="_sortAndSearcher.SearchOption">
+    <InputSelect @bind-Value="_userPageUtilities.SearchOption">
         @foreach (var searchOption in Enum.GetValues(typeof(SearchOption)))
         {
             <option value="@searchOption">Search by @searchOption</option>
         }
     </InputSelect>
+    <input id="search" @bind-value="_userPageUtilities.SearchTerm" @oninput=OnSearchInput />
+    <br />
 
-    <InputSelect @bind-Value="_sortAndSearcher.SortOption" @bind-Value:after=Sort>
+    <InputSelect @bind-Value="_userPageUtilities.SortOption" @bind-Value:after=Sort>
         @foreach (var sortOption in Enum.GetValues(typeof(SortOption)))
         {
             <option value="@sortOption">Sort by @sortOption</option>
         }
     </InputSelect>
-
-    <input id="search" @bind-value="_sortAndSearcher.SearchTerm" @oninput=OnSearchInput />
 
     <table class="table">
         <thead>
@@ -44,7 +48,7 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var user in _searchedSortedUsers)
+            @foreach (var user in _searchedSortedShownUsers)
             {
                 <tr>
                     <td>@user.ID</td>
@@ -60,67 +64,82 @@ else
         </tbody>
     </table>
 
-    <button type="button" @onclick=ShowAllEventHandler>Show All</button>
+    <button type="button" @onclick=ShowAll>Show All</button>
+    <button type="button" @onclick=ShowLess>Show Less</button>
 }
 
 @code {
     private List<User> _users = new List<User>();
-    private List<User> _numberofUsers = new List<User>();
-    private List<User> _searchedSortedUsers = new List<User>();
+    private List<User> _searchedSortedShownUsers = new List<User>();
     private IDataAccess? _dataAccess;
-    private UsersPageUtilities _sortAndSearcher = new UsersPageUtilities();
-    private int _shownUsers;
-
+    private UsersPageUtilities _userPageUtilities = new UsersPageUtilities();
+    private int _numberOfShownUsers;
     private string? _userDataErrorMessage;
+    private string? _userIndexOftOfRangeMessage;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        Task.Delay(1000);
+        await Task.Delay(1000);
         SetUserData();
-
-        _shownUsers = 5;
-        ShowNumberOfUsers();
-        _searchedSortedUsers = _numberofUsers;
-        OrderByName();
+        ShowLess();
     }
-
     private void SetUserData()
     {
         try
         {
-            _userDataErrorMessage = null;
             _dataAccess = new JSONDataAccess();
             _users = _dataAccess.GetUsers();
+            _userDataErrorMessage = null;
         }
         catch (AggregateException e)
         {
-            _userDataErrorMessage = e.Message;
             _dataAccess = new SampleDataAccess();
             _users = _dataAccess.GetUsers();
+            _userDataErrorMessage = e.Message;
+
         }
         catch (HttpRequestException e)
         {
-            _userDataErrorMessage = e.Message;
             _dataAccess = new SampleDataAccess();
             _users = _dataAccess.GetUsers();
+            _userDataErrorMessage = e.Message;
         }
     }
-    private void ShowAllEventHandler()
+    private void ShowAll()
     {
-        _shownUsers = (_users != null) ? _users.Count : 0;
-        ShowNumberOfUsers();
-        Search();
+        _numberOfShownUsers = (_users != null) ? _users.Count : 0;
+        Show();
     }
-
-    private void OnSearchInput(ChangeEventArgs e)
+    public void ShowLess()
     {
-        _sortAndSearcher.SearchTerm = e.Value?.ToString() ?? string.Empty;
+        _numberOfShownUsers = 5;
+        Show();
+    }
+    public void Show()
+    {
         Search();
         Sort();
+        if (_numberOfShownUsers < _searchedSortedShownUsers.Count)
+        {
+            try
+            {
+                ShowNumberOfUsers();
+                _userIndexOftOfRangeMessage = null;
+            }
+            catch (ArgumentOutOfRangeException e)
+            {
+                _userIndexOftOfRangeMessage = e.Message;
+            }
+        }
+    }
+    private void OnSearchInput(ChangeEventArgs e)
+    {
+        _userPageUtilities.SearchTerm = e.Value?.ToString() ?? string.Empty;        
+        Show();
     }
     private void Search()
     {
-        switch (_sortAndSearcher.SearchOption)
+        switch (_userPageUtilities.SearchOption)
         {
             case SearchOption.Name: SearchByName(); break;
             case SearchOption.City: SearchByCity(); break;
@@ -128,39 +147,15 @@ else
     }
     private void Sort()
     {
-        switch (_sortAndSearcher.SortOption)
+        switch (_userPageUtilities.SortOption)
         {
             case SortOption.Name: OrderByName(); break;
             case SortOption.ID: OrderById(); break;
         }
     }
-    private void ShowNumberOfUsers() => _numberofUsers = _users.FilterUsersByAmount(_shownUsers);
-    private void OrderByName() => _searchedSortedUsers = _searchedSortedUsers.OrderUsersByName();
-    private void OrderById() => _searchedSortedUsers = _searchedSortedUsers.OrderUsersById();
-    private void SearchByName() => _searchedSortedUsers = _numberofUsers.FilterUsersByName(_sortAndSearcher.SearchTerm);
-    private void SearchByCity() => _searchedSortedUsers = _numberofUsers.FilterUsersByCity(_sortAndSearcher.SearchTerm);
-    public enum SearchOption
-    {
-        Name,
-        City
-    }
-    public enum SortOption
-    {
-        Name,
-        ID
-    }
-    public class UsersPageUtilities
-    {
-        public SortOption SortOption { get; set; }
-        public SearchOption SearchOption { get; set; }
-        public string SearchTerm { get; set; }
-
-        public UsersPageUtilities()
-        {
-            SearchTerm = string.Empty;
-            SearchOption = SearchOption.Name;
-            SortOption = SortOption.Name;
-        }
-    }
-
+    private void ShowNumberOfUsers() => _searchedSortedShownUsers = _searchedSortedShownUsers.FilterUsersByAmount(_numberOfShownUsers);
+    private void OrderByName() => _searchedSortedShownUsers = _searchedSortedShownUsers.OrderUsersByName();
+    private void OrderById() => _searchedSortedShownUsers = _searchedSortedShownUsers.OrderUsersById();
+    private void SearchByName() => _searchedSortedShownUsers = _users.FilterUsersByName(_userPageUtilities.SearchTerm);
+    private void SearchByCity() => _searchedSortedShownUsers = _users.FilterUsersByCity(_userPageUtilities.SearchTerm);
 }
