@@ -1,6 +1,7 @@
 ﻿@page "/users"
 @rendermode InteractiveServer
 <h3>Users</h3>
+<p>(click user to see Todos)</p>
 
 @if (_users.Count < 1)
 {
@@ -50,7 +51,7 @@ else
         <tbody>
             @foreach (var user in _searchedSortedShownUsers)
             {
-                <tr>
+                <tr @onclick="() => ShowToDos(user)" style="cursor: pointer;">
                     <td>@user.ID</td>
                     <td>@user.Name</td>
                     <td>@user.Email</td>
@@ -66,6 +67,11 @@ else
 
     <button type="button" @onclick=ShowAll>Show All</button>
     <button type="button" @onclick=ShowLess>Show Less</button>
+    <br />
+    @if (_showToDos)
+    {
+        <Todos CurrentUser="_currentUser"></Todos>
+    }
 }
 
 @code {
@@ -76,6 +82,8 @@ else
     private int _numberOfShownUsers;
     private string? _userDataErrorMessage;
     private string? _userIndexOftOfRangeMessage;
+    private bool _showToDos = false;
+    private User _currentUser = new User();
 
     protected override async Task OnInitializedAsync()
     {
@@ -104,6 +112,18 @@ else
             _users = _dataAccess.GetUsers();
             _userDataErrorMessage = e.Message;
         }
+    }
+    private void ShowToDos(User user)
+    {
+        if (user == _currentUser)
+        {
+            _showToDos = (_showToDos) ? false : true;
+        }
+        else
+        {
+            _showToDos = true;
+        }
+        _currentUser = user;
     }
     private void ShowAll()
     {

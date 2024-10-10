@@ -4,9 +4,9 @@ namespace LabbBlazor
 {
     public static class ToDoCollectionExtensions
     {
-        public static List<ToDo> GetSpecificUserTodos(this List<ToDo> allTodos, User specificUser)
+        public static List<ToDo> GetSpecificUserTodos(this List<ToDo> allTodos, int specificUser)
         {
-            return allTodos.Where(x => x.UserId == specificUser.ID).ToList();
+            return allTodos.Where(x => x.UserId == specificUser).ToList();
         }
         public static List<ToDo> GetIncompletedTodos(this List<ToDo> todos)
         {
