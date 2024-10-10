@@ -68,7 +68,7 @@ else
     private List<User> _numberofUsers = new List<User>();
     private List<User> _searchedSortedUsers = new List<User>();
     private IDataAccess? _dataAccess;
-    private SearchSort _sortAndSearcher = new SearchSort();
+    private UsersPageUtilities _sortAndSearcher = new UsersPageUtilities();
     private int _shownUsers;
 
     private string? _userDataErrorMessage;
@@ -81,10 +81,7 @@ else
         _shownUsers = 5;
         ShowNumberOfUsers();
         _searchedSortedUsers = _numberofUsers;
-        _sortAndSearcher.SortOption = SortOption.Name;
-        _sortAndSearcher.SearchOption = SearchOption.Name;
         OrderByName();
-
     }
 
     private void SetUserData()
@@ -108,33 +105,13 @@ else
             _users = _dataAccess.GetUsers();
         }
     }
-
     private void ShowAllEventHandler()
     {
         _shownUsers = (_users != null) ? _users.Count : 0;
         ShowNumberOfUsers();
         Search();
     }
-    private void ShowNumberOfUsers()
-    {
-        _numberofUsers = _users.FilterByAmount(_shownUsers);
-    }
-    private void OrderByName()
-    {
-        _searchedSortedUsers = _searchedSortedUsers.SortByName();
-    }
-    private void OrderById()
-    {
-        _searchedSortedUsers = _searchedSortedUsers.SortById();
-    }
-    private void SearchByName()
-    {
-        _searchedSortedUsers = _numberofUsers.SearchByName(_sortAndSearcher.SearchTerm);
-    }
-    private void SearchByCity()
-    {
-        _searchedSortedUsers = _numberofUsers.SearchByCity(_sortAndSearcher.SearchTerm);
-    }
+
     private void OnSearchInput(ChangeEventArgs e)
     {
         _sortAndSearcher.SearchTerm = e.Value?.ToString() ?? string.Empty;
@@ -157,6 +134,11 @@ else
             case SortOption.ID: OrderById(); break;
         }
     }
+    private void ShowNumberOfUsers() => _numberofUsers = _users.FilterUsersByAmount(_shownUsers);
+    private void OrderByName() => _searchedSortedUsers = _searchedSortedUsers.OrderUsersByName();
+    private void OrderById() => _searchedSortedUsers = _searchedSortedUsers.OrderUsersById();
+    private void SearchByName() => _searchedSortedUsers = _numberofUsers.FilterUsersByName(_sortAndSearcher.SearchTerm);
+    private void SearchByCity() => _searchedSortedUsers = _numberofUsers.FilterUsersByCity(_sortAndSearcher.SearchTerm);
     public enum SearchOption
     {
         Name,
@@ -167,14 +149,17 @@ else
         Name,
         ID
     }
-    public class SearchSort
+    public class UsersPageUtilities
     {
         public SortOption SortOption { get; set; }
         public SearchOption SearchOption { get; set; }
         public string SearchTerm { get; set; }
-        public SearchSort()
+
+        public UsersPageUtilities()
         {
             SearchTerm = string.Empty;
+            SearchOption = SearchOption.Name;
+            SortOption = SortOption.Name;
         }
     }
 
