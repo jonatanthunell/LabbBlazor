@@ -1,5 +1,10 @@
 ﻿@page "/users"
 @rendermode InteractiveServer
+<style>
+    tr:hover.user-tr {
+        background-color: lightgray;
+    }
+</style>
 <h3>Users</h3>
 <p>(click user to see Todos)</p>
 
@@ -51,7 +56,7 @@ else
         <tbody>
             @foreach (var user in _searchedSortedShownUsers)
             {
-                <tr @onclick="() => ShowToDos(user)" style="cursor: pointer;">
+                <tr class="user-tr" @onclick="() => ShowToDos(user)" style="cursor: pointer;">
                     <td>@user.ID</td>
                     <td>@user.Name</td>
                     <td>@user.Email</td>

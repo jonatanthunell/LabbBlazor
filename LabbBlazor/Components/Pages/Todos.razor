@@ -1,9 +1,16 @@
 ﻿@page "/todos"
 @rendermode InteractiveServer
 
-<h3>Todos for user @CurrentUser.ID: @CurrentUser.Name</h3>
-@* <InputCheckbox></InputCheckbox>
-<InputText></InputText> *@
+@if(CurrentUser != null)
+{
+    <h3>Todos for user @CurrentUser.ID: @CurrentUser.Name</h3>
+}
+
+<InputCheckbox @bind-Value="_onlyShowIncompletedTodos" @bind-Value:after=Filter></InputCheckbox>
+Only show incompleted<br />
+<InputText @bind-Value="_seachTerm" @oninput=OnSearchInput></InputText>
+Search for task<br />
+
 <table class="table">
     <thead>
         <tr>
@@ -13,7 +20,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var todo in _currentUserTodos)
+        @foreach (var todo in _currentUserTodosFiltered)
         {
             <tr>
                 <td>@todo.Id</td>
@@ -25,13 +32,44 @@
 </table>
 @code {
     [Parameter]
-    public User CurrentUser { get; set; }
+    public User? CurrentUser { get; set; }
 
     private JSONDataAccess _dataAccess = new JSONDataAccess();
     private List<ToDo> _currentUserTodos = new List<ToDo>();
+    private List<ToDo> _currentUserTodosFiltered = new List<ToDo>();
+    private bool _onlyShowIncompletedTodos = false;
+    private string _seachTerm = string.Empty;
 
     protected override void OnParametersSet()
     {
-        _currentUserTodos = _dataAccess.GetToDos().GetSpecificUserTodos(CurrentUser.ID);
+        if(CurrentUser != null)
+        {
+            _currentUserTodos = _dataAccess.GetToDos().GetSpecificUserTodos(CurrentUser.ID);
+            Filter();
+        }
+    }
+    private void OnSearchInput(ChangeEventArgs e)
+    {
+        if (e.Value != null)
+        {
+            _seachTerm = e.Value.ToString() ?? string.Empty;
+        }
+        Filter();
+    }
+    private void Filter()
+    {
+        Search();
+        if (_onlyShowIncompletedTodos)
+        {
+            ShowIncompletedTodos();
+        }
+    }
+    private void Search()
+    {
+        _currentUserTodosFiltered = _currentUserTodos.Where(x => x.Title.ToLower().Contains(_seachTerm.Trim().ToLower())).ToList();
+    }
+    private void ShowIncompletedTodos()
+    {
+        _currentUserTodosFiltered = _currentUserTodosFiltered.Where(x => !x.Completed).ToList();
     }
 }
