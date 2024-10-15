@@ -33,8 +33,9 @@ Search for task<br />
 @code {
     [Parameter]
     public User? CurrentUser { get; set; }
+    [Parameter]
+    public IDataAccess? DataAccess { get; set; }
 
-    private JSONDataAccess _dataAccess = new JSONDataAccess();
     private List<ToDo> _currentUserTodos = new List<ToDo>();
     private List<ToDo> _currentUserTodosFiltered = new List<ToDo>();
     private bool _onlyShowIncompletedTodos = false;
@@ -42,9 +43,9 @@ Search for task<br />
 
     protected override void OnParametersSet()
     {
-        if(CurrentUser != null)
+        if(CurrentUser != null && DataAccess != null)
         {
-            _currentUserTodos = _dataAccess.GetToDos().GetSpecificUserTodos(CurrentUser.ID);
+            _currentUserTodos = DataAccess.GetToDos().GetSpecificUserTodos(CurrentUser.ID);
             Filter();
         }
     }
@@ -66,10 +67,10 @@ Search for task<br />
     }
     private void Search()
     {
-        _currentUserTodosFiltered = _currentUserTodos.Where(x => x.Title.ToLower().Contains(_seachTerm.Trim().ToLower())).ToList();
+        _currentUserTodosFiltered = _currentUserTodos.FilterTodosByTitle(_seachTerm);
     }
     private void ShowIncompletedTodos()
     {
-        _currentUserTodosFiltered = _currentUserTodosFiltered.Where(x => !x.Completed).ToList();
+        _currentUserTodosFiltered = _currentUserTodosFiltered.GetIncompletedTodos();
     }
 }

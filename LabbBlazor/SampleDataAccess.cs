@@ -7,5 +7,10 @@
             SampleUserData userData = new SampleUserData();
             return userData.Users;
         }
+        public List<ToDo> GetToDos()
+        {
+            SampleToDoData todoData = new SampleToDoData();
+            return todoData.ToDos;
+        }
     }
 }

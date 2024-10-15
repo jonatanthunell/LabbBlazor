@@ -25,19 +25,15 @@ else
     }
 
     <InputSelect @bind-Value="_userPageUtilities.SearchOption">
-        @foreach (var searchOption in Enum.GetValues(typeof(SearchOption)))
-        {
-            <option value="@searchOption">Search by @searchOption</option>
-        }
+        <option value="@UserProperty.Name">Search by Name</option>
+        <option value="@UserProperty.City">Search by City</option>
     </InputSelect>
     <input id="search" @bind-value="_userPageUtilities.SearchTerm" @oninput=OnSearchInput />
     <br />
 
     <InputSelect @bind-Value="_userPageUtilities.SortOption" @bind-Value:after=Sort>
-        @foreach (var sortOption in Enum.GetValues(typeof(SortOption)))
-        {
-            <option value="@sortOption">Sort by @sortOption</option>
-        }
+        <option value="@UserProperty.Name">Sort by Name</option>
+        <option value="@UserProperty.ID">Sort by ID</option>
     </InputSelect>
 
     <table class="table">
@@ -54,7 +50,7 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var user in _searchedSortedShownUsers)
+            @foreach (var user in _filteredUsers)
             {
                 <tr class="user-tr" @onclick="() => ShowToDos(user)" style="cursor: pointer;">
                     <td>@user.ID</td>
@@ -73,17 +69,19 @@ else
     <button type="button" @onclick=ShowAll>Show All</button>
     <button type="button" @onclick=ShowLess>Show Less</button>
     <br />
+
     @if (_showToDos)
     {
-        <Todos CurrentUser="_currentUser"></Todos>
+        <Todos DataAccess="_dataAccess" CurrentUser="_currentUser"></Todos>
     }
 }
 
 @code {
-    private List<User> _users = new List<User>();
-    private List<User> _searchedSortedShownUsers = new List<User>();
     private IDataAccess? _dataAccess;
+    private List<User> _users = new List<User>();
+    private List<User> _filteredUsers = new List<User>();    
     private UsersPageUtilities _userPageUtilities = new UsersPageUtilities();
+
     private int _numberOfShownUsers;
     private string? _userDataErrorMessage;
     private string? _userIndexOftOfRangeMessage;
@@ -133,18 +131,18 @@ else
     private void ShowAll()
     {
         _numberOfShownUsers = (_users != null) ? _users.Count : 0;
-        Show();
+        Filter();
     }
     public void ShowLess()
     {
         _numberOfShownUsers = 5;
-        Show();
+        Filter();
     }
-    public void Show()
+    public void Filter()
     {
         Search();
         Sort();
-        if (_numberOfShownUsers < _searchedSortedShownUsers.Count)
+        if (_numberOfShownUsers < _filteredUsers.Count)
         {
             try
             {
@@ -159,28 +157,19 @@ else
     }
     private void OnSearchInput(ChangeEventArgs e)
     {
-        _userPageUtilities.SearchTerm = e.Value?.ToString() ?? string.Empty;        
-        Show();
+        if (e.Value != null)
+        {
+            _userPageUtilities.SearchTerm = e.Value.ToString() ?? string.Empty;
+        }              
+        Filter();
     }
     private void Search()
     {
-        switch (_userPageUtilities.SearchOption)
-        {
-            case SearchOption.Name: SearchByName(); break;
-            case SearchOption.City: SearchByCity(); break;
-        }
+        _filteredUsers = _users.Search(_userPageUtilities.SearchOption, _userPageUtilities.SearchTerm);
     }
     private void Sort()
     {
-        switch (_userPageUtilities.SortOption)
-        {
-            case SortOption.Name: OrderByName(); break;
-            case SortOption.ID: OrderById(); break;
-        }
+        _filteredUsers = _filteredUsers.Order(_userPageUtilities.SortOption);
     }
-    private void ShowNumberOfUsers() => _searchedSortedShownUsers = _searchedSortedShownUsers.FilterUsersByAmount(_numberOfShownUsers);
-    private void OrderByName() => _searchedSortedShownUsers = _searchedSortedShownUsers.OrderUsersByName();
-    private void OrderById() => _searchedSortedShownUsers = _searchedSortedShownUsers.OrderUsersById();
-    private void SearchByName() => _searchedSortedShownUsers = _users.FilterUsersByName(_userPageUtilities.SearchTerm);
-    private void SearchByCity() => _searchedSortedShownUsers = _users.FilterUsersByCity(_userPageUtilities.SearchTerm);
+    private void ShowNumberOfUsers() => _filteredUsers = _filteredUsers.FilterUsersByAmount(_numberOfShownUsers);
 }

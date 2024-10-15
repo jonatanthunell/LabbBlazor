@@ -1,26 +1,20 @@
 ﻿namespace LabbBlazor
 {
-    public enum SearchOption
+    public enum UserProperty
     {
-        Name,
-        City
-    }
-    public enum SortOption
-    {
-        Name,
-        ID
+        ID, Name, Email, Street, City, ZipCode, Company, CatchPhrase
     }
     public class UsersPageUtilities
     {
-        public SortOption SortOption { get; set; }
-        public SearchOption SearchOption { get; set; }
+        public UserProperty SortOption { get; set; }
+        public UserProperty SearchOption { get; set; }
         public string SearchTerm { get; set; }
 
         public UsersPageUtilities()
         {
             SearchTerm = string.Empty;
-            SearchOption = SearchOption.Name;
-            SortOption = SortOption.Name;
+            SearchOption = UserProperty.Name;
+            SortOption = UserProperty.Name;
         }
     }
 }
