@@ -1,6 +1,4 @@
-﻿using LabbBlazor.Components.Pages;
-
-namespace LabbBlazor
+﻿namespace LabbBlazor
 {
     public static class ToDoCollectionExtensions
     {

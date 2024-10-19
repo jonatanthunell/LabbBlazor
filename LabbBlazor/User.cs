@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace LabbBlazor
+﻿namespace LabbBlazor
 {
     public class User
     {

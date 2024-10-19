@@ -72,14 +72,14 @@ else
 
     @if (_showToDos)
     {
-        <Todos DataAccess="_dataAccess" CurrentUser="_currentUser"></Todos>
+        <Todos CurrentUser="_currentUser"></Todos>
     }
 }
 
 @code {
-    private IDataAccess? _dataAccess;
+    private IDataAccess<User>? _userData;
     private List<User> _users = new List<User>();
-    private List<User> _filteredUsers = new List<User>();    
+    private List<User> _filteredUsers = new List<User>();
     private UsersPageUtilities _userPageUtilities = new UsersPageUtilities();
 
     private int _numberOfShownUsers;
@@ -91,30 +91,15 @@ else
     protected override async Task OnInitializedAsync()
     {
         await Task.Delay(1000);
-        SetUserData();
+        await SetUserData();
         ShowLess();
     }
-    private void SetUserData()
+    private async Task SetUserData()
     {
-        try
-        {
-            _dataAccess = new JSONDataAccess();
-            _users = _dataAccess.GetUsers();
-            _userDataErrorMessage = null;
-        }
-        catch (AggregateException e)
-        {
-            _dataAccess = new SampleDataAccess();
-            _users = _dataAccess.GetUsers();
-            _userDataErrorMessage = e.Message;
-
-        }
-        catch (HttpRequestException e)
-        {
-            _dataAccess = new SampleDataAccess();
-            _users = _dataAccess.GetUsers();
-            _userDataErrorMessage = e.Message;
-        }
+        _userData = new UserApiDataAccess();
+        var users = await _userData.GetDataAsync();
+        _users = users.ToList();
+        _userDataErrorMessage = null;
     }
     private void ShowToDos(User user)
     {
@@ -160,7 +145,7 @@ else
         if (e.Value != null)
         {
             _userPageUtilities.SearchTerm = e.Value.ToString() ?? string.Empty;
-        }              
+        }
         Filter();
     }
     private void Search()

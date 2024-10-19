@@ -33,19 +33,23 @@ Search for task<br />
 @code {
     [Parameter]
     public User? CurrentUser { get; set; }
-    [Parameter]
-    public IDataAccess? DataAccess { get; set; }
 
+    private IDataAccess<ToDo>? _toDoData;
     private List<ToDo> _currentUserTodos = new List<ToDo>();
     private List<ToDo> _currentUserTodosFiltered = new List<ToDo>();
     private bool _onlyShowIncompletedTodos = false;
     private string _seachTerm = string.Empty;
 
-    protected override void OnParametersSet()
+    protected override void OnInitialized()
     {
-        if(CurrentUser != null && DataAccess != null)
+        _toDoData = new TodoApiDataAccess();
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+        if (CurrentUser != null && _toDoData != null)
         {
-            _currentUserTodos = DataAccess.GetToDos().GetSpecificUserTodos(CurrentUser.ID);
+            var result = await _toDoData.GetDataAsync();
+            _currentUserTodos = result.ToList().GetSpecificUserTodos(CurrentUser.ID);
             Filter();
         }
     }

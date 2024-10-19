@@ -33,11 +33,16 @@ namespace LabbBlazor
         [Required]
         [StringLength(100, MinimumLength = 2)]
         public string? CompanyCatchPhrase { get; set; }
+        public NewUserFormValidator()
+        {            
+            ID = 11;
+        }
 
         public User GetValidatedUser()
         {
             return new User(
-                new SampleDataAccess().GetUsers().Count + 1,
+                //Vid ett riktigt scenario implementera logik för att ge ID ett värde av "numberOfCurrentUsers + 1"
+                ID,
                 Name ?? throw new NullReferenceException("Name field must contain a name"),
                 Email ?? throw new NullReferenceException("Email field must contain an email address"),
                 AddressStreet ?? throw new NullReferenceException("Street field must contain a street"),
