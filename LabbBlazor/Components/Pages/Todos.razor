@@ -49,7 +49,7 @@ Search for task<br />
         if (CurrentUser != null && _toDoData != null)
         {
             var result = await _toDoData.GetDataAsync();
-            _currentUserTodos = result.ToList().GetSpecificUserTodos(CurrentUser.ID);
+            _currentUserTodos = result.ToList().GetCurrentUserTodos(CurrentUser.ID);
             Filter();
         }
     }

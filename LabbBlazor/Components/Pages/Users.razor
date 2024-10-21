@@ -72,7 +72,7 @@ else
 
     @if (_showToDos)
     {
-        <Todos CurrentUser="_currentUser"></Todos>
+        <Todos CurrentUser="_currentToDosUser"></Todos>
     }
 }
 
@@ -86,7 +86,7 @@ else
     private string? _userDataErrorMessage;
     private string? _userIndexOftOfRangeMessage;
     private bool _showToDos = false;
-    private User _currentUser = new User();
+    private User _currentToDosUser = new User();
 
     protected override async Task OnInitializedAsync()
     {
@@ -103,7 +103,7 @@ else
     }
     private void ShowToDos(User user)
     {
-        if (user == _currentUser)
+        if (user == _currentToDosUser)
         {
             _showToDos = (_showToDos) ? false : true;
         }
@@ -111,7 +111,7 @@ else
         {
             _showToDos = true;
         }
-        _currentUser = user;
+        _currentToDosUser = user;
     }
     private void ShowAll()
     {
@@ -148,13 +148,7 @@ else
         }
         Filter();
     }
-    private void Search()
-    {
-        _filteredUsers = _users.Search(_userPageUtilities.SearchOption, _userPageUtilities.SearchTerm);
-    }
-    private void Sort()
-    {
-        _filteredUsers = _filteredUsers.Order(_userPageUtilities.SortOption);
-    }
+    private void Search() => _filteredUsers = _users.Search(_userPageUtilities.SearchOption, _userPageUtilities.SearchTerm);
+    private void Sort() => _filteredUsers = _filteredUsers.Order(_userPageUtilities.SortOption);
     private void ShowNumberOfUsers() => _filteredUsers = _filteredUsers.FilterUsersByAmount(_numberOfShownUsers);
 }
