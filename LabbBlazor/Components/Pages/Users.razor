@@ -1,14 +1,17 @@
-﻿@page "/users"
+﻿@using System.Text.Json
+@using System.Net.Sockets
+@page "/users"
 @rendermode InteractiveServer
+<PageTitle>Users</PageTitle>
 <style>
     tr:hover.user-tr {
         background-color: lightgray;
     }
 </style>
-<h3>Users</h3>
+<h3>Current users</h3>
 <p>(click user to see Todos)</p>
 
-@if (_users.Count < 1)
+@if (_users.Count < 1 && _userDataErrorMessage == null)
 {
     <p><em>Fetching User Information...</em></p>
 }
@@ -17,21 +20,20 @@ else
     @if (_userDataErrorMessage != null)
     {
         <p>Could not load user data (@_userDataErrorMessage)</p>
-        <p>Please contact admin, displaying sample data</p>
     }
-    @if (_userIndexOftOfRangeMessage != null)
+    @if (_userIndexOutOfRangeMessage != null)
     {
         <p>_userIndexOftOfRangeMessage</p>
     }
 
-    <InputSelect @bind-Value="_userPageUtilities.SearchOption">
+    <InputSelect @bind-Value="_userFilter.SearchOption">
         <option value="@UserProperty.Name">Search by Name</option>
         <option value="@UserProperty.City">Search by City</option>
     </InputSelect>
-    <input id="search" @bind-value="_userPageUtilities.SearchTerm" @oninput=OnSearchInput />
+    <input id="search" @bind-value="_userFilter.SearchTerm" @oninput=OnSearchInput />
     <br />
 
-    <InputSelect @bind-Value="_userPageUtilities.SortOption" @bind-Value:after=Sort>
+    <InputSelect @bind-Value="_userFilter.SortOption" @bind-Value:after=Sort>
         <option value="@UserProperty.Name">Sort by Name</option>
         <option value="@UserProperty.ID">Sort by ID</option>
     </InputSelect>
@@ -72,7 +74,7 @@ else
 
     @if (_showToDos)
     {
-        <Todos CurrentUser="_currentToDosUser"></Todos>
+        <Todos CurrentUser="_userWithShownTodos"></Todos>
     }
 }
 
@@ -80,13 +82,13 @@ else
     private IDataAccess<User>? _userData;
     private List<User> _users = new List<User>();
     private List<User> _filteredUsers = new List<User>();
-    private UsersPageUtilities _userPageUtilities = new UsersPageUtilities();
+    private UserCollectionFilterUtilities _userFilter = new UserCollectionFilterUtilities();
 
     private int _numberOfShownUsers;
     private string? _userDataErrorMessage;
-    private string? _userIndexOftOfRangeMessage;
+    private string? _userIndexOutOfRangeMessage;
     private bool _showToDos = false;
-    private User _currentToDosUser = new User();
+    private User _userWithShownTodos = new User();
 
     protected override async Task OnInitializedAsync()
     {
@@ -96,14 +98,56 @@ else
     }
     private async Task SetUserData()
     {
-        _userData = new UserApiDataAccess();
-        var users = await _userData.GetDataAsync();
-        _users = users.ToList();
-        _userDataErrorMessage = null;
+        try
+        {
+            //_userData = new UserSampleDataAccess();
+            
+            _userData = new UserApiDataAccess();
+
+            var users = await _userData.GetDataAsync();
+            _users = users.ToList();
+            _userDataErrorMessage = null;
+        }
+        catch (DirectoryNotFoundException ex)
+        {
+            _userDataErrorMessage = ex.Message;
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            _userDataErrorMessage = ex.Message;
+        }
+        catch (FileNotFoundException ex)
+        {
+            _userDataErrorMessage = ex.Message;
+        }
+        catch (IOException ex)
+        {
+            _userDataErrorMessage = ex.Message;
+        }
+        catch (JsonException ex)
+        {
+            _userDataErrorMessage = ex.Message;
+        }
+        catch (NotSupportedException ex)
+        {
+            _userDataErrorMessage = ex.Message;
+        }
+        catch (SocketException ex)
+        {
+            _userDataErrorMessage = ex.Message;
+        }
+        catch (HttpRequestException ex)
+        {
+            _userDataErrorMessage = ex.Message;
+        }
+        catch (ArgumentNullException ex)
+        {
+            _userDataErrorMessage = ex.Message;
+        }
     }
     private void ShowToDos(User user)
     {
-        if (user == _currentToDosUser)
+        if (user == _userWithShownTodos)
         {
             _showToDos = (_showToDos) ? false : true;
         }
@@ -111,7 +155,7 @@ else
         {
             _showToDos = true;
         }
-        _currentToDosUser = user;
+        _userWithShownTodos = user;
     }
     private void ShowAll()
     {
@@ -132,11 +176,11 @@ else
             try
             {
                 ShowNumberOfUsers();
-                _userIndexOftOfRangeMessage = null;
+                _userIndexOutOfRangeMessage = null;
             }
             catch (ArgumentOutOfRangeException e)
             {
-                _userIndexOftOfRangeMessage = e.Message;
+                _userIndexOutOfRangeMessage = e.Message;
             }
         }
     }
@@ -144,11 +188,11 @@ else
     {
         if (e.Value != null)
         {
-            _userPageUtilities.SearchTerm = e.Value.ToString() ?? string.Empty;
+            _userFilter.SearchTerm = e.Value.ToString() ?? string.Empty;
         }
         Filter();
     }
-    private void Search() => _filteredUsers = _users.Search(_userPageUtilities.SearchOption, _userPageUtilities.SearchTerm);
-    private void Sort() => _filteredUsers = _filteredUsers.Order(_userPageUtilities.SortOption);
+    private void Search() => _filteredUsers = _users.Search(_userFilter.SearchOption, _userFilter.SearchTerm);
+    private void Sort() => _filteredUsers = _filteredUsers.Order(_userFilter.SortOption);
     private void ShowNumberOfUsers() => _filteredUsers = _filteredUsers.FilterUsersByAmount(_numberOfShownUsers);
 }

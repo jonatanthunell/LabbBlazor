@@ -4,13 +4,13 @@
     {
         ID, Name, Email, Street, City, ZipCode, Company, CatchPhrase
     }
-    public class UsersPageUtilities
+    public class UserCollectionFilterUtilities
     {
         public UserProperty SortOption { get; set; }
         public UserProperty SearchOption { get; set; }
         public string SearchTerm { get; set; }
 
-        public UsersPageUtilities()
+        public UserCollectionFilterUtilities()
         {
             SearchTerm = string.Empty;
             SearchOption = UserProperty.Name;

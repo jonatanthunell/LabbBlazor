@@ -11,11 +11,17 @@ namespace LabbBlazor
                 PropertyNameCaseInsensitive = true,
             };
 
-            using FileStream filestream = File.OpenRead("SampleData/user-sample-data.json");
-            
-            var result = await JsonSerializer.DeserializeAsync<IEnumerable<ToDo>>(filestream, options);
-            await filestream.DisposeAsync();
-            return result!;
+            try
+            {
+                using FileStream filestream = File.OpenRead("SampleData/todo-sample-data.json");
+                var result = await JsonSerializer.DeserializeAsync<IEnumerable<ToDo>>(filestream, options);
+                await filestream.DisposeAsync();
+                return result ?? throw new ArgumentNullException();
+            }
+            catch
+            {
+                throw;
+            }
         }
     }
 }

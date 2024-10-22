@@ -6,15 +6,23 @@ namespace LabbBlazor
     {
         public async Task<IEnumerable<User>> GetDataAsync()
         {
+            var path = "SampleData/user-sample-data.json";
             var options = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true,
             };
 
-            using FileStream filestream = File.OpenRead("SampleData/user-sample-data.json");
-            var result = await JsonSerializer.DeserializeAsync<IEnumerable<User>>(filestream, options);
-            await filestream.DisposeAsync();
-            return result!; 
+            try
+            {
+                using FileStream filestream = File.OpenRead(path);
+                var result = await JsonSerializer.DeserializeAsync<IEnumerable<User>>(filestream, options);
+                await filestream.DisposeAsync();
+                return result ?? throw new ArgumentNullException();
+            }
+            catch
+            {
+                throw;
+            }
         }
     }
 }

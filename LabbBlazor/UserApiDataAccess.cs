@@ -11,9 +11,16 @@ namespace LabbBlazor
                 PropertyNameCaseInsensitive = true,
             };
 
-            var httpClient = new HttpClient();
-            var result = await httpClient.GetFromJsonAsync<IEnumerable<User>>("https://jsonplaceholder.typicode.com/users", options);
-            return result!;
+            try
+            {
+                var httpClient = new HttpClient();
+                var result = await httpClient.GetFromJsonAsync<IEnumerable<User>>("https://jsonplaceholder.typicode.com/users", options);
+                return result ?? throw new ArgumentNullException();
+            }
+            catch
+            {
+                throw;
+            }
         }
     }
 }
