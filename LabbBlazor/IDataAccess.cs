@@ -1,7 +1,8 @@
 ﻿namespace LabbBlazor
 {
-    public interface IDataAccess <T>
+    public interface IDataAccess
     {
-        public Task<IEnumerable<T>> GetDataAsync();
+        public Task<IEnumerable<User>> GetUsersAsync();
+        public Task<IEnumerable<ToDo>> GetToDosAsync();
     }
 }

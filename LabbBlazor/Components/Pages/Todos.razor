@@ -40,32 +40,27 @@ Search for task
 @code {
     [Parameter]
     public User? CurrentUser { get; set; }
+    [Parameter]
+    public IDataAccess? DataAccess { get; set; }
 
-    private IDataAccess<ToDo>? _toDoData;
     private List<ToDo> _currentUserTodos = new List<ToDo>();
     private List<ToDo> _currentUserTodosFiltered = new List<ToDo>();
     private bool _onlyShowIncompletedTodos = false;
     private string _seachTerm = string.Empty;
     private string? _todoDataErrorMessage;
 
-    protected override void OnInitialized()
-    {
-        //_toDoData = new ToDoSampleDataAccess();
-        
-        _toDoData = new TodoApiDataAccess();
-    }
     protected override async Task OnParametersSetAsync()
     {
-        await SetTodoData();
+        await SetToDoData();
         Filter();
     }
-    private async Task SetTodoData()
+    private async Task SetToDoData()
     {
-        if (CurrentUser != null && _toDoData != null)
+        if (CurrentUser != null && DataAccess != null)
         {
             try
             {
-                var result = await _toDoData.GetDataAsync();
+                var result = await DataAccess.GetToDosAsync();
                 _currentUserTodos = result.ToList().GetCurrentUserTodos(CurrentUser.ID);
                 _todoDataErrorMessage = null;
             }

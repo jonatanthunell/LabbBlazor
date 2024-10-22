@@ -74,12 +74,12 @@ else
 
     @if (_showToDos)
     {
-        <Todos CurrentUser="_userWithShownTodos"></Todos>
+        <Todos CurrentUser="_userWithShownTodos" DataAccess="_dataAccess"></Todos>
     }
 }
 
 @code {
-    private IDataAccess<User>? _userData;
+    private IDataAccess? _dataAccess;
     private List<User> _users = new List<User>();
     private List<User> _filteredUsers = new List<User>();
     private UserCollectionFilterUtilities _userFilter = new UserCollectionFilterUtilities();
@@ -100,11 +100,11 @@ else
     {
         try
         {
-            //_userData = new UserSampleDataAccess();
+            //_dataAccess = new SampleDataAccess();
             
-            _userData = new UserApiDataAccess();
+            _dataAccess = new ApiDataAccess();
 
-            var users = await _userData.GetDataAsync();
+            var users = await _dataAccess.GetUsersAsync();
             _users = users.ToList();
             _userDataErrorMessage = null;
         }
