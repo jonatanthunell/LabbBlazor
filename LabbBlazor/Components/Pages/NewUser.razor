@@ -7,55 +7,51 @@
 
 @if (!_validFormSubmited)
 {
-    try
-    {
-        <EditForm Model="@_newUser" OnValidSubmit="HandleValidSubmit">
-            <DataAnnotationsValidator />
-            <div>
-                <label>
-                    Full Name:<br />
-                    <InputText id="name" @bind-Value="_newUser.Name" />
-                    <ValidationMessage For="@(() => _newUser.Name)" />
-                </label><br />
-                <label>
-                    Email:<br />
-                    <InputText id="email" @bind-Value="_newUser.Email" />
-                    <ValidationMessage For="@(() => _newUser.Email)" />
-                </label><br />
-                <label>
-                    Street:<br />
-                    <InputText id="street" @bind-Value="_newUser.AddressStreet" />
-                    <ValidationMessage For="@(() => _newUser.AddressStreet)" />
-                </label>:<br />
-                <label>
-                    City:<br />
-                    <InputText id="city" @bind-Value="_newUser.AddressCity" />
-                    <ValidationMessage For="@(() => _newUser.AddressCity)" />
-                </label><br />
-                <label>
-                    Zip Code:<br />
-                    <InputText id="zipcode" @bind-Value="_newUser.AddressZipCode" />
-                    <ValidationMessage For="@(() => _newUser.AddressZipCode)" />
-                </label><br />
-                <label>
-                    Company Name:<br />
-                    <InputText id="companyname" @bind-Value="_newUser.CompanyName" />
-                    <ValidationMessage For="@(() => _newUser.CompanyName)" />
-                </label><br />
-                <label>
-                    Company Catchphrase:<br />
-                    <InputText id="companycatchphrase" @bind-Value="_newUser.CompanyCatchPhrase" />
-                    <ValidationMessage For="@(() => _newUser.CompanyCatchPhrase)" />
-                </label><br />
-            </div>
-            <button type="submit">Submit</button>
-        </EditForm>
-    }
-    catch (NullReferenceException e)
-    {
-        <p>Error, @e.Message, please fill out form again </p>
-    }
-
+    <EditForm Model="@_newUser" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <div>
+            <label>
+                Full Name:<br />
+                <InputText id="name" @bind-Value="_newUser.Name" />
+                <ValidationMessage For="@(() => _newUser.Name)" />
+            </label><br />
+            <label>
+                Email:<br />
+                <InputText id="email" @bind-Value="_newUser.Email" />
+                <ValidationMessage For="@(() => _newUser.Email)" />
+            </label><br />
+            <label>
+                Street:<br />
+                <InputText id="street" @bind-Value="_newUser.AddressStreet" />
+                <ValidationMessage For="@(() => _newUser.AddressStreet)" />
+            </label>:<br />
+            <label>
+                City:<br />
+                <InputText id="city" @bind-Value="_newUser.AddressCity" />
+                <ValidationMessage For="@(() => _newUser.AddressCity)" />
+            </label><br />
+            <label>
+                Zip Code:<br />
+                <InputText id="zipcode" @bind-Value="_newUser.AddressZipCode" />
+                <ValidationMessage For="@(() => _newUser.AddressZipCode)" />
+            </label><br />
+            <label>
+                Company Name:<br />
+                <InputText id="companyname" @bind-Value="_newUser.CompanyName" />
+                <ValidationMessage For="@(() => _newUser.CompanyName)" />
+            </label><br />
+            <label>
+                Company Catchphrase:<br />
+                <InputText id="companycatchphrase" @bind-Value="_newUser.CompanyCatchPhrase" />
+                <ValidationMessage For="@(() => _newUser.CompanyCatchPhrase)" />
+            </label><br />
+        </div>
+        <button type="submit">Submit</button>
+    </EditForm>
+}
+else if (_formSubmitErrorMessage != null)
+{
+    <p>@_formSubmitErrorMessage</p>
 }
 else
 {
@@ -76,26 +72,27 @@ else
         <li><b>Company Catchphrase:</b></li>
         <li>@_newUser.CompanyCatchPhrase</li>
     </ul>
-    <p>Your user ID is: @_userID</p>
+    <p>Your user ID is: @_validatedUser.ID</p>
 }
 
 @code {
     private NewUserFormValidator _newUser = new NewUserFormValidator();
     private User _validatedUser = new User();
     private bool _validFormSubmited = false;
-    private int _userID;
+    private string? _formSubmitErrorMessage = null;
 
     private void HandleValidSubmit()
     {
+        // Då NewUserFormValidator har required på alla properties förstår jag inte riktigt varför jag behöver null-hantering
+        // Men visual studio säger till om man inte sätter properties som nullable
         try
         {
             _validatedUser = _newUser.GetValidatedUser();
         }
-        catch
+        catch (NullReferenceException e)
         {
-            throw;
+            _formSubmitErrorMessage = $"Error, {e.Message}, please fill out the form again";
         }
         _validFormSubmited = true;
-        _userID = _validatedUser.ID;
     }
 }

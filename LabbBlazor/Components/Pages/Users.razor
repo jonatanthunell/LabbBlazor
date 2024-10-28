@@ -2,12 +2,14 @@
 @using System.Net.Sockets
 @page "/users"
 @rendermode InteractiveServer
+
 <PageTitle>Users</PageTitle>
 <style>
     tr:hover.user-tr {
         background-color: lightgray;
     }
 </style>
+
 <h3>Current users</h3>
 <p>(click user to see Todos)</p>
 
@@ -15,12 +17,12 @@
 {
     <p><em>Fetching User Information...</em></p>
 }
+else if (_userDataErrorMessage != null)
+{
+    <p>Could not load user data (@_userDataErrorMessage)</p>
+}
 else
 {
-    @if (_userDataErrorMessage != null)
-    {
-        <p>Could not load user data (@_userDataErrorMessage)</p>
-    }
     @if (_userIndexOutOfRangeMessage != null)
     {
         <p>_userIndexOftOfRangeMessage</p>
@@ -101,7 +103,6 @@ else
         try
         {
             //_dataAccess = new SampleDataAccess();
-            
             _dataAccess = new ApiDataAccess();
 
             var users = await _dataAccess.GetUsersAsync();
@@ -173,15 +174,7 @@ else
         Sort();
         if (_numberOfShownUsers < _filteredUsers.Count)
         {
-            try
-            {
-                ShowNumberOfUsers();
-                _userIndexOutOfRangeMessage = null;
-            }
-            catch (ArgumentOutOfRangeException e)
-            {
-                _userIndexOutOfRangeMessage = e.Message;
-            }
+            ShowNumberOfUsers();
         }
     }
     private void OnSearchInput(ChangeEventArgs e)
@@ -192,7 +185,18 @@ else
         }
         Filter();
     }
+    private void ShowNumberOfUsers()
+    {
+        try
+        {
+            _filteredUsers = _filteredUsers.SelectUsersByAmount(_numberOfShownUsers);
+            _userIndexOutOfRangeMessage = null;
+        }
+        catch (ArgumentOutOfRangeException e)
+        {
+            _userIndexOutOfRangeMessage = e.Message;
+        }
+    }
     private void Search() => _filteredUsers = _users.Search(_userFilter.SearchOption, _userFilter.SearchTerm);
     private void Sort() => _filteredUsers = _filteredUsers.Order(_userFilter.SortOption);
-    private void ShowNumberOfUsers() => _filteredUsers = _filteredUsers.FilterUsersByAmount(_numberOfShownUsers);
 }
