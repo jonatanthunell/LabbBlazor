@@ -1,6 +1,4 @@
-﻿@using System.Text.Json
-@using System.Net.Sockets
-@page "/users"
+﻿@page "/users"
 @rendermode InteractiveServer
 
 <PageTitle>Users</PageTitle>
@@ -13,29 +11,29 @@
 <h3>Current users</h3>
 <p>(click user to see Todos)</p>
 
-@if (_users.Count < 1 && _userDataErrorMessage == null)
+@if (_viewModel.Users.Count < 1 && _viewModel.UserDataErrorMessage == null)
 {
     <p><em>Fetching User Information...</em></p>
 }
-else if (_userDataErrorMessage != null)
+else if (_viewModel.UserDataErrorMessage != null)
 {
-    <p>Could not load user data (@_userDataErrorMessage)</p>
+    <p>@_viewModel.UserDataErrorMessage</p>
 }
 else
 {
-    @if (_userIndexOutOfRangeMessage != null)
+    @if (_viewModel.UserIndexOutOfRangeMessage != null)
     {
-        <p>_userIndexOftOfRangeMessage</p>
+        <p>@_viewModel.UserIndexOutOfRangeMessage</p>
     }
 
-    <InputSelect @bind-Value="_userFilter.SearchOption">
+    <InputSelect @bind-Value="_viewModel.UserFilter.SearchOption">
         <option value="@UserProperty.Name">Search by Name</option>
         <option value="@UserProperty.City">Search by City</option>
     </InputSelect>
-    <input id="search" @bind-value="_userFilter.SearchTerm" @oninput=OnSearchInput />
+    <input id="search" @bind-value="_viewModel.UserFilter.SearchTerm" @oninput=OnSearchInput />
     <br />
 
-    <InputSelect @bind-Value="_userFilter.SortOption" @bind-Value:after=Sort>
+    <InputSelect @bind-Value="_viewModel.UserFilter.SortOption" @bind-Value:after=_viewModel.Filter>
         <option value="@UserProperty.Name">Sort by Name</option>
         <option value="@UserProperty.ID">Sort by ID</option>
     </InputSelect>
@@ -54,9 +52,9 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var user in _filteredUsers)
+            @foreach (var user in _viewModel.FilteredUsers)
             {
-                <tr class="user-tr" @onclick="() => ShowToDos(user)" style="cursor: pointer;">
+                <tr class="user-tr" @onclick="() => _viewModel.ShowHideToDos(user)" style="cursor: pointer;">
                     <td>@user.ID</td>
                     <td>@user.Name</td>
                     <td>@user.Email</td>
@@ -70,133 +68,32 @@ else
         </tbody>
     </table>
 
-    <button type="button" @onclick=ShowAll>Show All</button>
-    <button type="button" @onclick=ShowLess>Show Less</button>
+    <button type="button" @onclick=_viewModel.ShowAll>Show All</button>
+    <button type="button" @onclick=_viewModel.ShowLess>Show Less</button>
     <br />
 
-    @if (_showToDos)
+    @if (_viewModel.ShowToDos)
     {
-        <Todos CurrentUser="_userWithShownTodos" DataAccess="_dataAccess"></Todos>
+        <Todos CurrentUser="_viewModel.UserWithShownTodos" DataAccess="_viewModel.DataAccess"></Todos>
     }
 }
 
 @code {
-    private IDataAccess? _dataAccess;
-    private List<User> _users = new List<User>();
-    private List<User> _filteredUsers = new List<User>();
-    private UserCollectionFilterUtilities _userFilter = new UserCollectionFilterUtilities();
-
-    private int _numberOfShownUsers;
-    private string? _userDataErrorMessage;
-    private string? _userIndexOutOfRangeMessage;
-    private bool _showToDos = false;
-    private User _userWithShownTodos = new User();
+    private UsersViewModel _viewModel = new UsersViewModel(new ApiDataAccess());
 
     protected override async Task OnInitializedAsync()
     {
         await Task.Delay(1000);
-        await SetUserData();
-        ShowLess();
+        await _viewModel.SetUserData();
+        _viewModel.ShowLess();
     }
-    private async Task SetUserData()
-    {
-        try
-        {
-            //_dataAccess = new SampleDataAccess();
-            _dataAccess = new ApiDataAccess();
 
-            var users = await _dataAccess.GetUsersAsync();
-            _users = users.ToList();
-            _userDataErrorMessage = null;
-        }
-        catch (DirectoryNotFoundException ex)
-        {
-            _userDataErrorMessage = ex.Message;
-        }
-        catch (UnauthorizedAccessException ex)
-        {
-            _userDataErrorMessage = ex.Message;
-        }
-        catch (FileNotFoundException ex)
-        {
-            _userDataErrorMessage = ex.Message;
-        }
-        catch (IOException ex)
-        {
-            _userDataErrorMessage = ex.Message;
-        }
-        catch (JsonException ex)
-        {
-            _userDataErrorMessage = ex.Message;
-        }
-        catch (NotSupportedException ex)
-        {
-            _userDataErrorMessage = ex.Message;
-        }
-        catch (SocketException ex)
-        {
-            _userDataErrorMessage = ex.Message;
-        }
-        catch (HttpRequestException ex)
-        {
-            _userDataErrorMessage = ex.Message;
-        }
-        catch (ArgumentNullException ex)
-        {
-            _userDataErrorMessage = ex.Message;
-        }
-    }
-    private void ShowToDos(User user)
-    {
-        if (user == _userWithShownTodos)
-        {
-            _showToDos = (_showToDos) ? false : true;
-        }
-        else
-        {
-            _showToDos = true;
-        }
-        _userWithShownTodos = user;
-    }
-    private void ShowAll()
-    {
-        _numberOfShownUsers = (_users != null) ? _users.Count : 0;
-        Filter();
-    }
-    public void ShowLess()
-    {
-        _numberOfShownUsers = 5;
-        Filter();
-    }
-    public void Filter()
-    {
-        Search();
-        Sort();
-        if (_numberOfShownUsers < _filteredUsers.Count)
-        {
-            ShowNumberOfUsers();
-        }
-    }
     private void OnSearchInput(ChangeEventArgs e)
     {
         if (e.Value != null)
         {
-            _userFilter.SearchTerm = e.Value.ToString() ?? string.Empty;
+            _viewModel.UserFilter.SearchTerm = e.Value.ToString() ?? string.Empty;
         }
-        Filter();
+        _viewModel.Filter();
     }
-    private void ShowNumberOfUsers()
-    {
-        try
-        {
-            _filteredUsers = _filteredUsers.SelectUsersByAmount(_numberOfShownUsers);
-            _userIndexOutOfRangeMessage = null;
-        }
-        catch (ArgumentOutOfRangeException e)
-        {
-            _userIndexOutOfRangeMessage = e.Message;
-        }
-    }
-    private void Search() => _filteredUsers = _users.Search(_userFilter.SearchOption, _userFilter.SearchTerm);
-    private void Sort() => _filteredUsers = _filteredUsers.Order(_userFilter.SortOption);
 }
