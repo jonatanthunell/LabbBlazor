@@ -20,8 +20,8 @@
                     <ToolTip>Register a new user</ToolTip>
                 </MenuItem.ToolTip>
             </MenuItem>
-            
-            <MenuItem Header="Users">
+
+            <MenuItem Header="Users" Click="Users_Click">
                 <MenuItem.ToolTip>
                     <ToolTip>View current users</ToolTip>
                 </MenuItem.ToolTip>

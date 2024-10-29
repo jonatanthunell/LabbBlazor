@@ -1,17 +1,32 @@
-﻿using System.Net.Sockets;
+﻿using System.ComponentModel;
+using System.Net.Sockets;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
+using System.Xml.Linq;
 
 namespace LabbBlazor
 {
-    public class UsersViewModel
+    public class UsersViewModel : INotifyPropertyChanged
     {
         public IDataAccess DataAccess { get; init; }
         public UserCollectionFilterUtilities UserFilter { get; private set; }
-        public List<User> Users { get; private set; }
+        private List<User> _users;
+        public List<User> Users
+        {
+            get { return _users; }
+            set
+            {
+                _users = value;
+                OnPropertyChanged();
+            }
+        }
         public List<User> FilteredUsers { get; set; }
         public User UserWithShownTodos { get; set; }
 
         private string? _userDataErrorMessage;
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
         public string? UserDataErrorMessage 
         { 
             get => (_userDataErrorMessage == null) ? null : $"Could not load user data ({_userDataErrorMessage})"; 
@@ -23,11 +38,15 @@ namespace LabbBlazor
         {
             DataAccess = dataAccess;
             UserFilter = new UserCollectionFilterUtilities();
-            Users = new List<User>();
+            _users = new List<User>();
             FilteredUsers = new List<User>();
             UserWithShownTodos = new User();
         }
-        public async Task SetUserData()
+        protected void OnPropertyChanged([CallerMemberName] string? name = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+        public async Task SetUserDataAsync()
         {
             try
             {

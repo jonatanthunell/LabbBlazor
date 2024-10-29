@@ -84,7 +84,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         await Task.Delay(1000);
-        await _viewModel.SetUserData();
+        await _viewModel.SetUserDataAsync();
         _viewModel.ShowLess();
     }
 
