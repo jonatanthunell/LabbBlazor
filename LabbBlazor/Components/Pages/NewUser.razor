@@ -1,98 +1,80 @@
 ﻿@page "/newuser"
-@using System.ComponentModel.DataAnnotations
 @using Microsoft.AspNetCore.Components.Forms
 @rendermode InteractiveServer
+
 <PageTitle>New User</PageTitle>
 <h3>Register new user</h3>
 
-@if (!_validFormSubmited)
+@if (!_viewModel.ValidFormSubmited)
 {
-    <EditForm Model="@_newUser" OnValidSubmit="HandleValidSubmit">
+    <EditForm Model="@_viewModel.NewUser" OnValidSubmit="_viewModel.HandleValidSubmit">
         <DataAnnotationsValidator />
         <div>
             <label>
                 Full Name:<br />
-                <InputText id="name" @bind-Value="_newUser.Name" />
-                <ValidationMessage For="@(() => _newUser.Name)" />
+                <InputText id="name" @bind-Value="_viewModel.NewUser.Name" />
+                <ValidationMessage For="@(() => _viewModel.NewUser.Name)" />
             </label><br />
             <label>
                 Email:<br />
-                <InputText id="email" @bind-Value="_newUser.Email" />
-                <ValidationMessage For="@(() => _newUser.Email)" />
+                <InputText id="email" @bind-Value="_viewModel.NewUser.Email" />
+                <ValidationMessage For="@(() => _viewModel.NewUser.Email)" />
             </label><br />
             <label>
                 Street:<br />
-                <InputText id="street" @bind-Value="_newUser.AddressStreet" />
-                <ValidationMessage For="@(() => _newUser.AddressStreet)" />
+                <InputText id="street" @bind-Value="_viewModel.NewUser.AddressStreet" />
+                <ValidationMessage For="@(() => _viewModel.NewUser.AddressStreet)" />
             </label>:<br />
             <label>
                 City:<br />
-                <InputText id="city" @bind-Value="_newUser.AddressCity" />
-                <ValidationMessage For="@(() => _newUser.AddressCity)" />
+                <InputText id="city" @bind-Value="_viewModel.NewUser.AddressCity" />
+                <ValidationMessage For="@(() => _viewModel.NewUser.AddressCity)" />
             </label><br />
             <label>
                 Zip Code:<br />
-                <InputText id="zipcode" @bind-Value="_newUser.AddressZipCode" />
-                <ValidationMessage For="@(() => _newUser.AddressZipCode)" />
+                <InputText id="zipcode" @bind-Value="_viewModel.NewUser.AddressZipCode" />
+                <ValidationMessage For="@(() => _viewModel.NewUser.AddressZipCode)" />
             </label><br />
             <label>
                 Company Name:<br />
-                <InputText id="companyname" @bind-Value="_newUser.CompanyName" />
-                <ValidationMessage For="@(() => _newUser.CompanyName)" />
+                <InputText id="companyname" @bind-Value="_viewModel.NewUser.CompanyName" />
+                <ValidationMessage For="@(() => _viewModel.NewUser.CompanyName)" />
             </label><br />
             <label>
                 Company Catchphrase:<br />
-                <InputText id="companycatchphrase" @bind-Value="_newUser.CompanyCatchPhrase" />
-                <ValidationMessage For="@(() => _newUser.CompanyCatchPhrase)" />
+                <InputText id="companycatchphrase" @bind-Value="_viewModel.NewUser.CompanyCatchPhrase" />
+                <ValidationMessage For="@(() => _viewModel.NewUser.CompanyCatchPhrase)" />
             </label><br />
         </div>
         <button type="submit">Submit</button>
     </EditForm>
 }
-else if (_formSubmitErrorMessage != null)
+else if (_viewModel.FormSubmitErrorMessage != null)
 {
-    <p>@_formSubmitErrorMessage</p>
+    <p>@_viewModel.FormSubmitErrorMessage</p>
 }
 else
 {
     <p>You submited the following information:</p>
     <ul style="list-style-type:none">
         <li><b>Full Name:</b></li>
-        <li>@_newUser.Name</li>
+        <li>@_viewModel.ValidatedUser.Name</li>
         <li><b>Email:</b></li>
-        <li>@_newUser.Email</li>
+        <li>@_viewModel.ValidatedUser.Email</li>
         <li><b>Street:</b></li>
-        <li>@_newUser.AddressStreet</li>
+        <li>@_viewModel.ValidatedUser.Address.Street</li>
         <li><b>City:</b></li>
-        <li>@_newUser.AddressCity</li>
+        <li>@_viewModel.ValidatedUser.Address.City</li>
         <li><b>Zip Code:</b></li>
-        <li>@_newUser.AddressZipCode</li>
+        <li>@_viewModel.ValidatedUser.Address.ZipCode</li>
         <li><b>Company Name:</b></li>
-        <li>@_newUser.CompanyName</li>
+        <li>@_viewModel.ValidatedUser.Company.Name</li>
         <li><b>Company Catchphrase:</b></li>
-        <li>@_newUser.CompanyCatchPhrase</li>
+        <li>@_viewModel.ValidatedUser.Company.CatchPhrase</li>
     </ul>
-    <p>Your user ID is: @_validatedUser.ID</p>
+    <p>Your user ID is: @_viewModel.ValidatedUser.ID</p>
 }
 
 @code {
-    private NewUserFormValidator _newUser = new NewUserFormValidator();
-    private User _validatedUser = new User();
-    private bool _validFormSubmited = false;
-    private string? _formSubmitErrorMessage = null;
-
-    private void HandleValidSubmit()
-    {
-        // Då NewUserFormValidator har required på alla properties förstår jag inte riktigt varför jag behöver null-hantering
-        // Men visual studio säger till om man inte sätter properties som nullable
-        try
-        {
-            _validatedUser = _newUser.GetValidatedUser();
-        }
-        catch (NullReferenceException e)
-        {
-            _formSubmitErrorMessage = $"Error, {e.Message}, please fill out the form again";
-        }
-        _validFormSubmited = true;
-    }
+    private NewUserViewModel _viewModel = new NewUserViewModel();
 }

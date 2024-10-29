@@ -2,7 +2,7 @@
 {
     public static class UserCollectionExtensions
     {
-        public static List<User> Order(this List<User> users, UserProperty orderProperty) => orderProperty switch 
+        public static List<User> Sort(this List<User> users, UserProperty orderProperty) => orderProperty switch 
         { 
             UserProperty.Name => SortUsersByName(users),
             UserProperty.ID => SortUsersById(users),

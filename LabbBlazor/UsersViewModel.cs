@@ -116,6 +116,6 @@ namespace LabbBlazor
             }
         }
         private void Search() => FilteredUsers = Users.Search(UserFilter.SearchOption, UserFilter.SearchTerm);
-        private void Sort() => FilteredUsers = FilteredUsers.Order(UserFilter.SortOption);
+        private void Sort() => FilteredUsers = FilteredUsers.Sort(UserFilter.SortOption);
     }
 }
