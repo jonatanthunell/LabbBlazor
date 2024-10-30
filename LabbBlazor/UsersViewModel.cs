@@ -9,7 +9,17 @@ namespace LabbBlazor
     public class UsersViewModel : INotifyPropertyChanged
     {
         public IDataAccess DataAccess { get; init; }
-        public UserCollectionFilterUtilities UserFilter { get; private set; }
+
+        private UserCollectionFilterUtilities _userFilter;
+        public UserCollectionFilterUtilities UserFilter
+        {
+            get { return _userFilter; }
+            set
+            {
+                _userFilter = value;
+                OnPropertyChanged(nameof(_userFilter));
+            }
+        }
         private List<User> _users;
         public List<User> Users
         {
@@ -17,16 +27,22 @@ namespace LabbBlazor
             set
             {
                 _users = value;
-                OnPropertyChanged();
+                OnPropertyChanged(nameof(Users));
             }
         }
-        public List<User> FilteredUsers { get; set; }
+        private List<User> _filteredUsers;
+        public List<User> FilteredUsers
+        {
+            get { return _filteredUsers; }
+            set
+            {
+                _filteredUsers = value;
+                OnPropertyChanged(nameof(FilteredUsers));
+            }
+        }
         public User UserWithShownTodos { get; set; }
 
         private string? _userDataErrorMessage;
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
         public string? UserDataErrorMessage 
         { 
             get => (_userDataErrorMessage == null) ? null : $"Could not load user data ({_userDataErrorMessage})"; 
@@ -34,12 +50,14 @@ namespace LabbBlazor
         }
         public string? UserIndexOutOfRangeMessage { get; set; }
         public bool ShowToDos { get; set; }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
         public UsersViewModel(IDataAccess dataAccess)
         {
             DataAccess = dataAccess;
-            UserFilter = new UserCollectionFilterUtilities();
+            _userFilter = new UserCollectionFilterUtilities();
             _users = new List<User>();
-            FilteredUsers = new List<User>();
+            _filteredUsers = new List<User>();
             UserWithShownTodos = new User();
         }
         protected void OnPropertyChanged([CallerMemberName] string? name = null)

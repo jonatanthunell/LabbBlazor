@@ -54,6 +54,7 @@
         {
             _viewModel = new ToDosViewModel(DataAccess, CurrentUser);
             await _viewModel.SetToDoData();
+            _viewModel.SetCurrentUserTodos();
             _viewModel.Filter();
         }
     }

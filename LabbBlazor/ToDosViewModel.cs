@@ -1,13 +1,26 @@
-﻿using System.Net.Sockets;
+﻿using System.ComponentModel;
+using System.Net.Sockets;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 namespace LabbBlazor
 {
-    public class ToDosViewModel
+    public class ToDosViewModel : INotifyPropertyChanged
     {
         public IDataAccess DataAccess { get; init; }
         public User CurrentUser { get; init; }
+        public List<ToDo> Todos { get; private set; }
         public List<ToDo> CurrentUserTodos { get; private set; }
-        public List<ToDo> CurrentUserTodosFiltered { get; set; }
+
+        private List<ToDo> _currentUserTodosFiltered;
+        public List<ToDo> CurrentUserTodosFiltered 
+        {
+            get { return _currentUserTodosFiltered; }
+            set
+            {
+                _currentUserTodosFiltered = value;
+                OnPropertyChanged(nameof(CurrentUserTodosFiltered)); 
+            }
+        }
         public bool OnlyShowIncompletedTodos { get; set; }
         public string SeachTerm { get; set; }
 
@@ -17,21 +30,31 @@ namespace LabbBlazor
             get => (_todoDataErrorMessage == null) ? null : $"Could not load todo data ({_todoDataErrorMessage})";
             set => _todoDataErrorMessage = value;
         }
+        public event PropertyChangedEventHandler? PropertyChanged;
         public ToDosViewModel(IDataAccess dataAccess, User currentUser)
         {
             DataAccess = dataAccess;
             CurrentUser = currentUser;
+            Todos = new List<ToDo>();
             CurrentUserTodos = new List<ToDo>();
             CurrentUserTodosFiltered = new List<ToDo>();
             OnlyShowIncompletedTodos = false;
             SeachTerm = string.Empty;
+        }
+        protected void OnPropertyChanged([CallerMemberName] string? name = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+        public void SetCurrentUserTodos()
+        {
+            CurrentUserTodos = Todos.GetCurrentUserTodos(CurrentUser.ID);
         }
         public async Task SetToDoData()
         {
             try
             {
                 var result = await DataAccess.GetToDosAsync();
-                CurrentUserTodos = result.ToList().GetCurrentUserTodos(CurrentUser.ID);
+                Todos = result.ToList();
                 TodoDataErrorMessage = null;
             }
             catch (DirectoryNotFoundException ex)

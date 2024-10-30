@@ -8,7 +8,14 @@
              d:DesignHeight="450" d:DesignWidth="800"
              Loaded="OnLoaded_Event" >
     <Grid>
-        <DataGrid x:Name="users" ItemsSource="{Binding Users}" AutoGenerateColumns="False">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="6*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="4*"/>
+        </Grid.RowDefinitions>
+
+        <DataGrid Grid.Row="0" x:Name="users" ItemsSource="{Binding FilteredUsers}" AutoGenerateColumns="False" IsReadOnly="True">
+            
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID" Binding="{Binding ID}" />
                 <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
@@ -19,6 +26,20 @@
                 <DataGridTextColumn Header="Company Name" Binding="{Binding Company.Name}" />
                 <DataGridTextColumn Header="Company Catchphrase" Binding="{Binding Company.CatchPhrase}" />
             </DataGrid.Columns>
+        </DataGrid>
+        
+        <WrapPanel Grid.Row="1">
+            <TextBlock Text="Search:" HorizontalAlignment="Center" Margin="5"/>
+            <TextBox x:Name="search" Width="100" Margin="5" Text="{Binding UserFilter.SearchTerm, UpdateSourceTrigger=PropertyChanged}" TextChanged="Search_TextChanged"/>
+            <ComboBox x:Name="searchOption" Margin="5" SelectionChanged="SearchOption_SelectionChanged">
+                <ComboBoxItem Content="By Name" Selector.IsSelected="True"/>
+                <ComboBoxItem Content="By City"/>
+            </ComboBox>
+            <Button x:Name="showtodos" Content="Show Selected User ToDos" Margin="5" Click="Showtodos_Click"/>
+        </WrapPanel>
+
+        <DataGrid x:Name="todos" Grid.Row="2" ItemsSource="{Binding CurrentUserTodosFiltered}">
+            
         </DataGrid>
     </Grid>
 </UserControl>

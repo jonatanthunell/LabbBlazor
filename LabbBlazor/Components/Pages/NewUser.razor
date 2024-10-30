@@ -5,53 +5,53 @@
 <PageTitle>New User</PageTitle>
 <h3>Register new user</h3>
 
-@if (!_viewModel.ValidFormSubmited)
+@if (!_validFormSubmited)
 {
-    <EditForm Model="@_viewModel.NewUser" OnValidSubmit="_viewModel.HandleValidSubmit">
+    <EditForm Model="@_newUser" OnValidSubmit="HandleValidSubmit">
         <DataAnnotationsValidator />
         <div>
             <label>
                 Full Name:<br />
-                <InputText id="name" @bind-Value="_viewModel.NewUser.Name" />
-                <ValidationMessage For="@(() => _viewModel.NewUser.Name)" />
+                <InputText id="name" @bind-Value="_newUser.Name" />
+                <ValidationMessage For="@(() => _newUser.Name)" />
             </label><br />
             <label>
                 Email:<br />
-                <InputText id="email" @bind-Value="_viewModel.NewUser.Email" />
-                <ValidationMessage For="@(() => _viewModel.NewUser.Email)" />
+                <InputText id="email" @bind-Value="_newUser.Email" />
+                <ValidationMessage For="@(() => _newUser.Email)" />
             </label><br />
             <label>
                 Street:<br />
-                <InputText id="street" @bind-Value="_viewModel.NewUser.AddressStreet" />
-                <ValidationMessage For="@(() => _viewModel.NewUser.AddressStreet)" />
+                <InputText id="street" @bind-Value="_newUser.AddressStreet" />
+                <ValidationMessage For="@(() => _newUser.AddressStreet)" />
             </label>:<br />
             <label>
                 City:<br />
-                <InputText id="city" @bind-Value="_viewModel.NewUser.AddressCity" />
-                <ValidationMessage For="@(() => _viewModel.NewUser.AddressCity)" />
+                <InputText id="city" @bind-Value="_newUser.AddressCity" />
+                <ValidationMessage For="@(() => _newUser.AddressCity)" />
             </label><br />
             <label>
                 Zip Code:<br />
-                <InputText id="zipcode" @bind-Value="_viewModel.NewUser.AddressZipCode" />
-                <ValidationMessage For="@(() => _viewModel.NewUser.AddressZipCode)" />
+                <InputText id="zipcode" @bind-Value="_newUser.AddressZipCode" />
+                <ValidationMessage For="@(() => _newUser.AddressZipCode)" />
             </label><br />
             <label>
                 Company Name:<br />
-                <InputText id="companyname" @bind-Value="_viewModel.NewUser.CompanyName" />
-                <ValidationMessage For="@(() => _viewModel.NewUser.CompanyName)" />
+                <InputText id="companyname" @bind-Value="_newUser.CompanyName" />
+                <ValidationMessage For="@(() => _newUser.CompanyName)" />
             </label><br />
             <label>
                 Company Catchphrase:<br />
-                <InputText id="companycatchphrase" @bind-Value="_viewModel.NewUser.CompanyCatchPhrase" />
-                <ValidationMessage For="@(() => _viewModel.NewUser.CompanyCatchPhrase)" />
+                <InputText id="companycatchphrase" @bind-Value="_newUser.CompanyCatchPhrase" />
+                <ValidationMessage For="@(() => _newUser.CompanyCatchPhrase)" />
             </label><br />
         </div>
         <button type="submit">Submit</button>
     </EditForm>
 }
-else if (_viewModel.FormSubmitErrorMessage != null)
+else if (_formSubmitErrorMessage != null)
 {
-    <p>@_viewModel.FormSubmitErrorMessage</p>
+    <p>@_formSubmitErrorMessage</p>
 }
 else
 {
@@ -77,4 +77,22 @@ else
 
 @code {
     private NewUserViewModel _viewModel = new NewUserViewModel();
+    private NewUserFormValidator _newUser = new NewUserFormValidator();
+    private string? _formSubmitErrorMessage;
+    private bool _validFormSubmited = false;
+
+    public void HandleValidSubmit()
+    {
+        // Då NewUserFormValidator har required på alla properties förstår jag inte riktigt varför jag behöver null-hantering
+        // Men visual studio säger till om man inte sätter properties som nullable
+        try
+        {
+            _viewModel.ValidatedUser = _newUser.GetValidatedUser();
+        }
+        catch (NullReferenceException e)
+        {
+            _formSubmitErrorMessage = $"Error, {e.Message}, please fill out the form again";
+        }
+        _validFormSubmited = true;
+    }
 }
