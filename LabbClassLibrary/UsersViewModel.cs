@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Xml.Linq;
 
-namespace LabbBlazor
+namespace LabbClassLibrary
 {
     public class UsersViewModel : INotifyPropertyChanged
     {

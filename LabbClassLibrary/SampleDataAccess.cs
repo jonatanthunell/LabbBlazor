@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Text.Json;
 
-namespace LabbBlazor
+namespace LabbClassLibrary
 {
     public class SampleDataAccess : IDataAccess
     {

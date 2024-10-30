@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
+using System.Net.Http.Json;
 
-namespace LabbBlazor
+namespace LabbClassLibrary
 {
     public class ApiDataAccess : IDataAccess
     {

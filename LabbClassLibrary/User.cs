@@ -1,4 +1,4 @@
-﻿namespace LabbBlazor
+﻿namespace LabbClassLibrary
 {
     public class User
     {

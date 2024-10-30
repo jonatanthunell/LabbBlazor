@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LabbBlazor\LabbBlazor.csproj" />
+    <ProjectReference Include="..\LabbClassLibrary\LabbClassLibrary.csproj" />
   </ItemGroup>
 
 </Project>
