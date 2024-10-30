@@ -28,14 +28,6 @@
             <TextBox HorizontalAlignment="Left" Width="100" Margin="5" Text="{Binding Path=ValidatedUser.Company.CatchPhrase, UpdateSourceTrigger=PropertyChanged}"></TextBox>
             <Button Content="Submit" Width="50" HorizontalAlignment="Left" Margin="5" Click="Submit_Click"/>
         </StackPanel>
-        <StackPanel Grid.Column="1">
-            <TextBlock Margin="3" >Name:</TextBlock>
-            <TextBlock Margin="3" >Email:</TextBlock>
-            <TextBlock Margin="3" >Street:</TextBlock>
-            <TextBlock Margin="3" >City:</TextBlock>
-            <TextBlock Margin="3" >Zip Code:</TextBlock>
-            <TextBlock Margin="3" >Company Name:</TextBlock>
-            <TextBlock Margin="3" >Company Catch Phrase:</TextBlock>
-        </StackPanel>
+        <ContentControl Grid.Column="1" x:Name="submitedUser" />
     </Grid>
 </UserControl>

@@ -1,5 +1,4 @@
-﻿using LabbBlazor;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,20 +16,13 @@ using System.Windows.Shapes;
 namespace LabbWPF
 {
     /// <summary>
-    /// Interaction logic for NewUserView.xaml
+    /// Interaction logic for SubmitedUserView.xaml
     /// </summary>
-    public partial class NewUserView : UserControl
+    public partial class SubmitedUserView : UserControl
     {
-        private NewUserViewModel _viewModel;
-        public NewUserView()
+        public SubmitedUserView()
         {
             InitializeComponent();
-            _viewModel = new NewUserViewModel();
-            DataContext = _viewModel;
-        }
-        private void Submit_Click(object sender, RoutedEventArgs e)
-        {
-            submitedUser.Content = new SubmitedUserView();
         }
     }
 }
