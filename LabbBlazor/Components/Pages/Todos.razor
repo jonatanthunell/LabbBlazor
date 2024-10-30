@@ -54,7 +54,7 @@
         if (CurrentUser != null && DataAccess != null)
         {
             _viewModel = new ToDosViewModel(DataAccess, CurrentUser);
-            await _viewModel.SetToDoData();
+            await _viewModel.SetToDoDataAsync();
             _viewModel.SetCurrentUserTodos();
             _viewModel.Filter();
         }

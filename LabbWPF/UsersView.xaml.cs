@@ -55,7 +55,7 @@ namespace LabbWPF
             }
 
             _toDosViewModel = new ToDosViewModel(_viewModel.DataAccess, _viewModel.UserWithShownTodos);
-            await _toDosViewModel.SetToDoData();
+            await _toDosViewModel.SetToDoDataAsync();
             _toDosViewModel.SetCurrentUserTodos();
             _toDosViewModel.Filter();
 

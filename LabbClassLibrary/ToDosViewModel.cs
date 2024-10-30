@@ -37,7 +37,7 @@ namespace LabbClassLibrary
             CurrentUser = currentUser;
             Todos = new List<ToDo>();
             CurrentUserTodos = new List<ToDo>();
-            CurrentUserTodosFiltered = new List<ToDo>();
+            _currentUserTodosFiltered = new List<ToDo>();
             OnlyShowIncompletedTodos = false;
             SeachTerm = string.Empty;
         }
@@ -49,7 +49,7 @@ namespace LabbClassLibrary
         {
             CurrentUserTodos = Todos.GetCurrentUserTodos(CurrentUser.ID);
         }
-        public async Task SetToDoData()
+        public async Task SetToDoDataAsync()
         {
             try
             {
