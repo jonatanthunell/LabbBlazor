@@ -25,8 +25,12 @@ namespace LabbWPF
         public NewUserView()
         {
             InitializeComponent();
-
             _viewModel = new NewUserViewModel();
+            DataContext = _viewModel;
+        }
+        private void Submit_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

@@ -7,9 +7,35 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <StackPanel>
-            <TextBlock>Name:</TextBlock>
-            <TextBox HorizontalAlignment="Left" Width="100" Text="{Binding Path=_viewModel.NewUser.Name}"></TextBox>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Column="0">
+            <TextBlock Margin="3" >Name:</TextBlock>
+            <TextBox HorizontalAlignment="Left" Width="100" Margin="5" Text="{Binding Path=ValidatedUser.Name, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+            <TextBlock Margin="3" >Email:</TextBlock>
+            <TextBox HorizontalAlignment="Left" Width="100" Margin="5" Text="{Binding Path=ValidatedUser.Email, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+            <TextBlock Margin="3" >Street:</TextBlock>
+            <TextBox HorizontalAlignment="Left" Width="100" Margin="5" Text="{Binding Path=ValidatedUser.Address.Street, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+            <TextBlock Margin="3" >City:</TextBlock>
+            <TextBox HorizontalAlignment="Left" Width="100" Margin="5" Text="{Binding Path=ValidatedUser.Address.City, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+            <TextBlock Margin="3" >Zip Code:</TextBlock>
+            <TextBox HorizontalAlignment="Left" Width="100" Margin="5" Text="{Binding Path=ValidatedUser.Address.ZipCode, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+            <TextBlock Margin="3" >Company Name:</TextBlock>
+            <TextBox HorizontalAlignment="Left" Width="100" Margin="5" Text="{Binding Path=ValidatedUser.Company.Name, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+            <TextBlock Margin="3" >Company Catch Phrase:</TextBlock>
+            <TextBox HorizontalAlignment="Left" Width="100" Margin="5" Text="{Binding Path=ValidatedUser.Company.CatchPhrase, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+            <Button Content="Submit" Width="50" HorizontalAlignment="Left" Margin="5" Click="Submit_Click"/>
+        </StackPanel>
+        <StackPanel Grid.Column="1">
+            <TextBlock Margin="3" >Name:</TextBlock>
+            <TextBlock Margin="3" >Email:</TextBlock>
+            <TextBlock Margin="3" >Street:</TextBlock>
+            <TextBlock Margin="3" >City:</TextBlock>
+            <TextBlock Margin="3" >Zip Code:</TextBlock>
+            <TextBlock Margin="3" >Company Name:</TextBlock>
+            <TextBlock Margin="3" >Company Catch Phrase:</TextBlock>
         </StackPanel>
     </Grid>
 </UserControl>
