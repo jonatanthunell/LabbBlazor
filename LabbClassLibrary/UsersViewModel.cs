@@ -103,14 +103,14 @@ namespace LabbClassLibrary
                 UserDataErrorMessage = ex.Message;
             }
         }
-        public void ShowHideCurrentUsersToDos(User user)
+        public void ShowHideCurrentUsersToDos(User selectedUser)
         {
-            ShowToDos = ShowHideToDos(user);
-            UserWithShownTodos = user;
+            ShowToDos = ShowHideToDos(selectedUser);
+            UserWithShownTodos = selectedUser;
         }
-        private bool ShowHideToDos(User user)
+        private bool ShowHideToDos(User selectedUser)
         {
-            return (user == UserWithShownTodos) ? !ShowToDos : true;
+            return (selectedUser == UserWithShownTodos) ? !ShowToDos : true;
         }
         public void ShowAll()
         {
