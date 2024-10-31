@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using System.Net.Http.Json;
+using System.Net.Http;
 
 namespace LabbClassLibrary
 {
@@ -14,15 +15,20 @@ namespace LabbClassLibrary
                 PropertyNameCaseInsensitive = true,
             };
 
+            var httpClient = new HttpClient();
+
             try
-            {
-                var httpClient = new HttpClient();
+            {              
                 var result = await httpClient.GetFromJsonAsync<IEnumerable<T>>(url, options);
                 return result ?? throw new ArgumentNullException();
             }
             catch
             {
                 throw;
+            }
+            finally
+            {
+                httpClient.Dispose();
             }
         }
     }
