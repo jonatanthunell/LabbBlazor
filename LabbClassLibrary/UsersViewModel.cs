@@ -109,7 +109,7 @@ namespace LabbClassLibrary
                 UserDataErrorMessage = ex.Message;
             }
         }
-        public void ShowHideToDos(User user)
+        public void ShowHideCurrentUsersToDos(User user)
         {
             if (user == UserWithShownTodos)
             {

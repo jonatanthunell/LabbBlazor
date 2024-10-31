@@ -54,7 +54,7 @@ else
         <tbody>
             @foreach (var user in _viewModel.FilteredUsers)
             {
-                <tr class="user-tr" @onclick="() => _viewModel.ShowHideToDos(user)" style="cursor: pointer;">
+                <tr class="user-tr" @onclick="() => _viewModel.ShowHideCurrentUsersToDos(user)" style="cursor: pointer;">
                     <td>@user.ID</td>
                     <td>@user.Name</td>
                     <td>@user.Email</td>
