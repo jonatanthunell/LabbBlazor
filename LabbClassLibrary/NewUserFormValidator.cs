@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace LabbClassLibrary
 {
@@ -15,22 +16,27 @@ namespace LabbClassLibrary
         public string? Email { get; set; }
 
         [Required]
+        [Display(Name = "Street")]
         [StringLength(50, MinimumLength = 2)]
         public string? AddressStreet { get; set; }
 
         [Required]
+        [Display(Name = "City")]
         [StringLength(50, MinimumLength = 2)]
         public string? AddressCity { get; set; }
 
         [Required]
+        [Display(Name = "Zip Code")]
         [StringLength(50, MinimumLength = 2)]
         public string? AddressZipCode { get; set; }
 
         [Required]
+        [Display(Name = "Company Name")]
         [StringLength(50, MinimumLength = 2)]
         public string? CompanyName { get; set; }
 
         [Required]
+        [Display(Name = "Company Catchphrase")]
         [StringLength(100, MinimumLength = 2)]
         public string? CompanyCatchPhrase { get; set; }
 
