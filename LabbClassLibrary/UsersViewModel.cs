@@ -111,15 +111,12 @@ namespace LabbClassLibrary
         }
         public void ShowHideCurrentUsersToDos(User user)
         {
-            if (user == UserWithShownTodos)
-            {
-                ShowToDos = (ShowToDos) ? false : true;
-            }
-            else
-            {
-                ShowToDos = true;
-            }
+            ShowToDos = ShowHideToDos(user);
             UserWithShownTodos = user;
+        }
+        private bool ShowHideToDos(User user)
+        {
+            return (user == UserWithShownTodos) ? !ShowToDos : true;
         }
         public void ShowAll()
         {

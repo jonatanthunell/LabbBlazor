@@ -2,9 +2,9 @@
 {
     public class ToDo
     {
-        public int UserId { get; init; }
-        public int Id { get; init; }
-        public string? Title { get; init; }
+        public int UserId { get; set; }
+        public int Id { get; set; }
+        public string? Title { get; set; }
         public bool Completed { get; set; }
     }
 }
