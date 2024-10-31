@@ -84,16 +84,7 @@ else
 
     public void HandleValidSubmit()
     {
-        // Då NewUserFormValidator har required på alla properties förstår jag inte riktigt varför jag behöver null-hantering
-        // Men visual studio säger till om man inte sätter properties som nullable
-        try
-        {
-            _viewModel.ValidatedUser = _newUser.GetValidatedUser();
-        }
-        catch (NullReferenceException e)
-        {
-            _formSubmitErrorMessage = $"Error, {e.Message}, please fill out the form again";
-        }
+        _viewModel.ValidatedUser = _newUser.GetValidatedUser();
         _validFormSubmited = true;
     }
 }
