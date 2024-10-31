@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 using System.Text.Json;
 namespace LabbClassLibrary
 {
-    public class ToDosViewModel : INotifyPropertyChanged
+    public class ToDosViewModel : ViewModel
     {
         public IDataAccess DataAccess { get; init; }
         public User CurrentUser { get; init; }
@@ -30,7 +30,6 @@ namespace LabbClassLibrary
             get => (_todoDataErrorMessage == null) ? null : $"Could not load todo data ({_todoDataErrorMessage})";
             set => _todoDataErrorMessage = value;
         }
-        public event PropertyChangedEventHandler? PropertyChanged;
         public ToDosViewModel(IDataAccess dataAccess, User currentUser)
         {
             DataAccess = dataAccess;
@@ -40,10 +39,6 @@ namespace LabbClassLibrary
             _currentUserTodosFiltered = new List<ToDo>();
             OnlyShowIncompletedTodos = false;
             SeachTerm = string.Empty;
-        }
-        protected void OnPropertyChanged([CallerMemberName] string? name = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
         public void SetCurrentUserTodos()
         {

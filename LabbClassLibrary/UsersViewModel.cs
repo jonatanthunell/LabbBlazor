@@ -6,7 +6,7 @@ using System.Xml.Linq;
 
 namespace LabbClassLibrary
 {
-    public class UsersViewModel : INotifyPropertyChanged
+    public class UsersViewModel : ViewModel
     {
         public IDataAccess DataAccess { get; init; }
 
@@ -50,8 +50,6 @@ namespace LabbClassLibrary
         }
         public string? UserIndexOutOfRangeMessage { get; set; }
         public bool ShowToDos { get; set; }
-
-        public event PropertyChangedEventHandler? PropertyChanged;
         public UsersViewModel(IDataAccess dataAccess)
         {
             DataAccess = dataAccess;
@@ -59,10 +57,6 @@ namespace LabbClassLibrary
             _users = new List<User>();
             _filteredUsers = new List<User>();
             UserWithShownTodos = new User();
-        }
-        protected void OnPropertyChanged([CallerMemberName] string? name = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
         public async Task SetUserDataAsync()
         {
