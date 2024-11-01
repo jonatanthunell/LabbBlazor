@@ -6,7 +6,6 @@
         public UserProperty SearchOption { get; set; }
         public string SearchTerm { get; set; }
         public int NumberOfShownUsers { get; set; }
-
         public UserCollectionFilterUtilities()
         {
             SearchTerm = string.Empty;

@@ -2,13 +2,13 @@
 {
     public static class UserCollectionExtensions
     {
-        public static List<User> Sort(this List<User> users, UserProperty orderProperty) => orderProperty switch 
+        public static List<User> Sort(this List<User> users, UserProperty sortProperty) => sortProperty switch 
         { 
             UserProperty.Name => SortUsersByName(users),
             UserProperty.ID => SortUsersById(users),
             _ => SortUsersById(users)
         };
-        public static List<User> Search(this List<User> users, UserProperty filterProperty, string searchTerm) => filterProperty switch
+        public static List<User> Search(this List<User> users, UserProperty searchProperty, string searchTerm) => searchProperty switch
         {
             UserProperty.Name => SearchUsersByName(users, searchTerm),
             UserProperty.City => SearchUsersByCity(users, searchTerm),

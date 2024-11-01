@@ -3,9 +3,9 @@
 @using LabbClassLibrary
 @rendermode InteractiveServer
 
-@if (_viewModel != null)
+@if (_viewModel != null && CurrentUser != null)
 {
-    <h3>Todos for user @_viewModel.CurrentUser.ID: @_viewModel.CurrentUser.Name</h3>
+    <h3>Todos for user @CurrentUser.ID: @CurrentUser.Name</h3>
 
     @if (_viewModel.TodoDataErrorMessage != null)
     {
@@ -53,9 +53,9 @@
     {
         if (CurrentUser != null && DataAccess != null)
         {
-            _viewModel = new ToDosViewModel(DataAccess, CurrentUser);
+            _viewModel = new ToDosViewModel(DataAccess);
             await _viewModel.SetToDoDataAsync();
-            _viewModel.SetCurrentUserTodos();
+            _viewModel.SetCurrentUserTodos(CurrentUser);
             _viewModel.Filter();
         }
     }

@@ -84,6 +84,8 @@ else
 
     public void HandleValidSubmit()
     {
+        //Vid ett riktigt scenario implementera logik för att ge ID ett värde av "numberOfCurrentUsers + 1 eller annat unikt ID"
+        _newUser.ID = 11;
         _viewModel.ValidatedUser = _newUser.GetValidatedUser();
         _validFormSubmited = true;
     }

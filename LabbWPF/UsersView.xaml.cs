@@ -54,9 +54,9 @@ namespace LabbWPF
                 _viewModel.UserWithShownTodos = users.SelectedItem as User ?? new User();
             }
 
-            _toDosViewModel = new ToDosViewModel(_viewModel.DataAccess, _viewModel.UserWithShownTodos);
+            _toDosViewModel = new ToDosViewModel(_viewModel.DataAccess);
             await _toDosViewModel.SetToDoDataAsync();
-            _toDosViewModel.SetCurrentUserTodos();
+            _toDosViewModel.SetCurrentUserTodos(_viewModel.UserWithShownTodos);
             _toDosViewModel.Filter();
 
             todos.DataContext = _toDosViewModel;

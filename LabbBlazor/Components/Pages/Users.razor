@@ -79,6 +79,7 @@ else
 }
 
 @code {
+    //Kan ändra ApiDataAccess() till SampleDataAccess() för att hämta data från lokala json-filer för både Users och ToDos
     private UsersViewModel _viewModel = new UsersViewModel(new ApiDataAccess());
 
     protected override async Task OnInitializedAsync()

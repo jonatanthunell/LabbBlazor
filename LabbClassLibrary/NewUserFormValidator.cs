@@ -5,6 +5,7 @@ namespace LabbClassLibrary
 {
     public class NewUserFormValidator
     {
+        [Key]
         public int ID { get; set; }
 
         [Required]
@@ -43,8 +44,8 @@ namespace LabbClassLibrary
         public User GetValidatedUser()
         {
             User user = new User();
-            //Vid ett riktigt scenario implementera logik för att ge ID ett värde av "numberOfCurrentUsers + 1"
-            user.ID = 11;
+            
+            user.ID = ID;
             user.Name = Name;
             user.Email = Email;
             user.Address.Street = AddressStreet;

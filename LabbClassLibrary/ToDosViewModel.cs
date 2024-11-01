@@ -7,7 +7,6 @@ namespace LabbClassLibrary
     public class ToDosViewModel : ViewModel
     {
         public IDataAccess DataAccess { get; init; }
-        public User CurrentUser { get; init; }
         public List<ToDo> Todos { get; private set; }
         public List<ToDo> CurrentUserTodos { get; private set; }
 
@@ -30,19 +29,18 @@ namespace LabbClassLibrary
             get => (_todoDataErrorMessage == null) ? null : $"Could not load todo data ({_todoDataErrorMessage})";
             set => _todoDataErrorMessage = value;
         }
-        public ToDosViewModel(IDataAccess dataAccess, User currentUser)
+        public ToDosViewModel(IDataAccess dataAccess)
         {
             DataAccess = dataAccess;
-            CurrentUser = currentUser;
             Todos = new List<ToDo>();
             CurrentUserTodos = new List<ToDo>();
             _currentUserTodosFiltered = new List<ToDo>();
             OnlyShowIncompletedTodos = false;
             SeachTerm = string.Empty;
         }
-        public void SetCurrentUserTodos()
+        public void SetCurrentUserTodos(User currentUser)
         {
-            CurrentUserTodos = Todos.GetCurrentUserTodos(CurrentUser.ID);
+            CurrentUserTodos = Todos.GetCurrentUserTodos(currentUser.ID);
         }
         public async Task SetToDoDataAsync()
         {
