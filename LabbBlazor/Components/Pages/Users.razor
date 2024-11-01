@@ -26,6 +26,10 @@ else
         <p>@_viewModel.UserIndexOutOfRangeMessage</p>
     }
 
+    <button type="button" @onclick=LoadSampleData>Load Sample Users</button>
+    <button type="button" @onclick=LoadApiData>Load Users From API</button>
+    <br />
+
     <InputSelect @bind-Value="_viewModel.UserFilter.SearchOption">
         <option value="@UserProperty.Name">Search by Name</option>
         <option value="@UserProperty.City">Search by City</option>
@@ -79,14 +83,30 @@ else
 }
 
 @code {
-    //Kan ändra ApiDataAccess() till SampleDataAccess() för att hämta data från lokala json-filer för både Users och ToDos
     private UsersViewModel _viewModel = new UsersViewModel(new ApiDataAccess());
 
     protected override async Task OnInitializedAsync()
     {
         await Task.Delay(1000);
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
         await _viewModel.SetUserDataAsync();
         _viewModel.ShowLess();
+    }
+
+    private async Task LoadSampleData()
+    {
+        _viewModel = new UsersViewModel(new SampleDataAccess());
+        await LoadData();
+    }
+
+    private async Task LoadApiData()
+    {
+        _viewModel = new UsersViewModel(new ApiDataAccess());
+        await LoadData();
     }
 
     private void OnSearchInput(ChangeEventArgs e)

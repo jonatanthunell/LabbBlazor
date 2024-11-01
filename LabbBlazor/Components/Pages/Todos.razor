@@ -1,63 +1,56 @@
-﻿@using System.Text.Json
-@using System.Net.Sockets
-@using LabbClassLibrary
+﻿@using LabbClassLibrary
 @rendermode InteractiveServer
 
-@if (_viewModel != null && CurrentUser != null)
+
+<h3>Todos for user @CurrentUser.ID: @CurrentUser.Name</h3>
+
+@if (_viewModel.TodoDataErrorMessage != null)
 {
-    <h3>Todos for user @CurrentUser.ID: @CurrentUser.Name</h3>
-
-    @if (_viewModel.TodoDataErrorMessage != null)
-    {
-        <p>@_viewModel.TodoDataErrorMessage</p>
-    }
-
-    <InputCheckbox @bind-Value="_viewModel.OnlyShowIncompletedTodos" @bind-Value:after=_viewModel.Filter></InputCheckbox>
-    <span>Only show incompleted</span>
-    <br />
-
-    <InputText @bind-Value="_viewModel.SeachTerm" @oninput=OnSearchInput></InputText>
-    <span>Search for task</span>
-    <br />
-
-    <table class="table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Title</th>
-                <th>Completed</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var todo in _viewModel.CurrentUserTodosFiltered)
-            {
-                <tr>
-                    <td>@todo.Id</td>
-                    <td>@todo.Title</td>
-                    <td>@todo.Completed</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <p>@_viewModel.TodoDataErrorMessage</p>
 }
+
+<InputCheckbox @bind-Value="_viewModel.OnlyShowIncompletedTodos" @bind-Value:after=_viewModel.Filter></InputCheckbox>
+<span>Only show incompleted</span>
+<br />
+
+<InputText @bind-Value="_viewModel.SeachTerm" @oninput=OnSearchInput></InputText>
+<span>Search for task</span>
+<br />
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Completed</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var todo in _viewModel.CurrentUserTodosFiltered)
+        {
+            <tr>
+                <td>@todo.Id</td>
+                <td>@todo.Title</td>
+                <td>@todo.Completed</td>
+            </tr>
+        }
+    </tbody>
+</table>
 
 @code {
     [Parameter]
-    public User? CurrentUser { get; set; }
+    public User CurrentUser { get; set; } = new User();
     [Parameter]
-    public IDataAccess? DataAccess { get; set; }
+    public IDataAccess DataAccess { get; set; } = new SampleDataAccess();
 
-    private ToDosViewModel? _viewModel;
+    private ToDosViewModel _viewModel = new ToDosViewModel(new SampleDataAccess());
 
     protected override async Task OnParametersSetAsync()
     {
-        if (CurrentUser != null && DataAccess != null)
-        {
-            _viewModel = new ToDosViewModel(DataAccess);
-            await _viewModel.SetToDoDataAsync();
-            _viewModel.SetCurrentUserTodos(CurrentUser);
-            _viewModel.Filter();
-        }
+        _viewModel = new ToDosViewModel(DataAccess);
+        await _viewModel.SetToDoDataAsync();
+        _viewModel.SetCurrentUserTodos(CurrentUser);
+        _viewModel.Filter();
     }
 
     private void OnSearchInput(ChangeEventArgs e)
